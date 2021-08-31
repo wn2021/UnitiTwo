@@ -1,0 +1,143 @@
+﻿@{
+    Layout = Layout = "~/Views/Shared/_Layout.cshtml"; ;
+}
+
+<div style="width:100%;">
+    <table style="width:90%;">       
+        <tr>
+            <td style="width:80%;">
+                
+                    <input name="enableFlag2" id="enableFlag2" class="mini-hidden" value="N" />
+                    <div style="width:100%;">
+                        <div class="mini-toolbar" style="border-bottom:0;padding:0px;">
+                            <table style="width:100%;">
+                                <tr>
+                                    <td style="width:100%;">
+                                        <a class="mini-button" iconCls="icon-edit" onclick="edit_e()">编辑</a>
+                                        <a class="mini-button" iconCls="icon-cancel" onclick="cancel_e()">取消</a>
+                                        <a class="mini-button" iconCls="icon-save" onclick="save_e()">保存</a>
+                                    </td>
+                                    <td style="white-space:nowrap;">
+                                        所属公司：<input id="e_companyId" class="mini-combobox" style="width:150px;" textField="OrganizationName" valueField="OrganizationId" emptyText="请选择..."
+                                                    url="/Common/GetCompanys" value="" showNullItem="true" nullItemText="请选择..." onvaluechanged="oneCompanyChanged" />
+                                        <span class="separator"></span>
+                                        所属部门：<input id="e_departmentId" class="mini-combobox" style="width:150px;" textField="OrganizationName" valueField="OrganizationId" emptyText="请选择..."
+                                                    value="" showNullItem="true" nullItemText="请选择..." onvaluechanged="oneDepartChanged" />
+                                        <span class="separator"></span>
+                                        职位级别：<input id="e_positionLevel" class="mini-combobox" style="width:150px;" textField="OrganizationName" valueField="OrganizationId" emptyText="请选择..."
+                                                    value="" showNullItem="true" nullItemText="请选择..." />
+                                        <a class="mini-button" onclick="search_E()">查询</a>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                    <div id="datagrid2" class="mini-datagrid" style="width:100%;height:450px;"
+                         url="/Salary/EmployeeSalary" idField="ues_id" sallowResize="true" pageSize="10" allowCellEdit="true" allowCellSelect="true"
+                         editNextOnEnterKey="true" editNextRowCell="true">
+                        <div property="columns">
+                            <div type="indexcolumn" width="30px">No.</div>
+                            <div field="ues_emp_id" width="100px" headerAlign="center" allowSort="true">员工编号</div>
+                            <div field="use_emp_name" width="100px" headerAlign="center" allowSort="true">员工姓名</div>
+                            <div field="ues_company_name" width="100px" headerAlign="center" allowSort="true">所属公司</div>
+                            <div field="ues_department_name" width="100px" headerAlign="center" allowSort="true">所属部门</div>
+                            <div field="ues_position_level" width="100px" headerAlign="center" allowSort="true">职位级别</div>
+                            <div field="use_bank_card" width="120px" headerAlign="center" allowSort="true">
+                                银行卡号
+                                <input property="editor" class="mini-textbox" value="" style="width:100%;" onvalidation="onEnglishAndNumberValidation" />
+                            </div>
+                            <div field="ues_salary" width="120px" headerAlign="center" allowSort="true" dataType="currency" currencyUnit="￥" align="right">
+                                员工薪资
+                                <input property="editor" class="mini-spinner" minValue="0" maxValue="999999999" value="" style="width:100%;" />
+                            </div>
+                            <div field="ues_start_date" width="100px" headerAlign="center" allowSort="true" dateFormat="yyyy-MM-dd" align="center">
+                                起始日期
+                                <input property="editor" class="mini-datepicker" style="width:100%;" />
+                            </div>
+                            <div field="ues_end_date" width="100px" headerAlign="center" allowSort="true" dateFormat="yyyy-MM-dd" align="center">
+                                截止日期
+                                <input property="editor" class="mini-datepicker" style="width:100%;" />
+                            </div>
+                            <div field="ues_salary_min" width="100px" headerAlign="center"  dataType="currency" currencyUnit="￥" align="right">最低薪资</div>
+                            <div field="ues_salary_max" width="100px" headerAlign="center" dataType="currency" currencyUnit="￥" align="right">最高薪资</div>
+                        </div>
+                    </div>
+               
+            </td>
+
+        </tr>
+    </table>
+</div>
+
+<script>
+    mini.parse();
+    var grid_emp = mini.get("datagrid2");
+    grid_emp.load();
+    
+    grid_emp.on("cellbeginedit", function (e) {
+        var enableFlag2 = mini.get("enableFlag2");
+        if (enableFlag2 && enableFlag2.value == 'N') {
+            e.cancel = true;
+        }
+    });
+    grid_emp.on("drawcell", function (e) {
+        var record = e.record;
+        //if (e.record.selected) { e.cancel = true; }
+        if (enableFlag2 && enableFlag2.value == 'Y') {
+            if (e.field == 'ues_salary'
+                || e.field == 'ues_start_date'
+                || e.field == 'ues_end_date') {
+                e.cellStyle = 'background-color:#98FB98;';
+            }
+        }
+    });
+    //--员工部分下拉框联动
+    var eCompany = mini.get("e_companyId");
+    var eDepart = mini.get("e_departmentId");
+    var eLevel = mini.get("e_positionLevel");
+    //公司下拉框改变选值
+    function oneCompanyChanged() {
+        var cmpId = eCompany.getValue();
+        eDepart.setValue("");
+        var url = "/Common/GetDepartments?companyid=" + cmpId;
+        eDepart.setUrl(url);
+    }
+    //部门下拉框改变选值
+    function oneDepartChanged(e) {
+        var cmpId = eCompany.getValue();
+        var depId = eDepart.getValue();
+        eLevel.setValue("");
+        var url = "/Common/GetLevels?companyid=" + cmpId + "&depid=" + depId;
+        eLevel.setUrl(url);
+    }
+    //查询有关薪资
+    function search_E() {
+        var e_companyId = mini.get("e_companyId").value;
+        var e_departmentId = mini.get("e_departmentId").value;
+        var e_positionLevel = mini.get("e_positionLevel").value;
+        var condition = { companyId: e_companyId, departmentId: e_departmentId, positionLevel: e_positionLevel };
+        grid_emp.load(condition);
+        var enableFlag2 = mini.get("enableFlag2");
+        enableFlag2.setValue("N");
+        grid_emp.doUpdate();
+    }
+
+    //编辑
+    function edit_e() {
+        var enableFlag2 = mini.get("enableFlag2");
+        enableFlag2.setValue("Y");
+        grid_emp.doUpdate();
+    }
+    //取消
+    function cancel_e() {
+        search_E();
+        
+    }
+    //保存
+    function save_e() {
+        saveGrid(grid_emp, {
+            url: "/Salary/SaveEmpSalary"
+        });
+        cancel_e();
+    }
+</script>

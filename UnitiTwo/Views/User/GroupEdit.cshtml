@@ -1,0 +1,75 @@
+﻿@{
+    ViewBag.Title = "GroupEdit";
+    //Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<form id="form1" method="post">
+
+
+    <div class="mini-fit'">
+        <input name="mu_id" id="mu_id" class="mini-hidden" value="@Model.mu_id" />
+        <table border="0" cellpadding="2" cellspacing="0" class="EditTable" style="width: 100%">
+            <tr>
+                <td class="tdLabel" style="width: 30%;"> 权限组名称：</td>
+                <td class="tdText" style="width: 70%;"><input class="mini-textbox" id="mu_description" name="mu_description" style="width: 200px;" value="@Model.mu_description"></td>
+            </tr>  
+            <tr>
+                <td class="tdLabel" style="width: 30%;"> 权限组状态：</td>
+                <td class="tdText" style="width: 70%;"><input id="mu_status" class="mini-combobox" name="mu_status" style="width:200px;" textField="description" valueField="sysvalue" emptyText="请选择..."
+       url="/Common/GetSystemInfoList?sysid=1000" value="@Model.mu_status" required="true" allowInput="false" showNullItem="true" nullItemText="请选择..." />   </td>
+            </tr>          
+        </table>
+
+        <div style="text-align:center;padding:10px;">
+            <a class="mini-button" onclick="onOk" style="width:60px;margin-right:20px;">确定</a>
+            <a class="mini-button" onclick="onCancel" style="width:60px;">取消</a>
+        </div>
+    </div>
+</form>
+
+
+<script type="text/javascript">
+
+    mini.parse();
+    var form = new mini.Form("form1");
+    function SaveData() {
+
+        var form = new mini.Form("#form1");
+        var data = form.getData();      //获取表单多个控件的数据
+        //var json = mini.encode(data);   //序列化成JSON
+        $.ajax({
+            url: "/User/GroupSave",
+            type: "post",
+            data: data,
+            success: function (text) {
+                //alert("提交成功，返回结果:" + text);
+                //grid.reload();
+
+                CloseWindow("提交成功");
+            }
+        });
+    }
+
+    function GetData() {
+        var o = form.getData();
+        return o;
+    }
+    function CloseWindow(action) {
+        if (action == "close" && form.isChanged()) {
+            mini.confirm("数据被修改了，是否先保存？","确认", function (action) {
+                if (action != "ok") {
+                    return false;
+                }
+            });
+            
+        }
+        if (window.CloseOwnerWindow) return window.CloseOwnerWindow(action);
+        else window.close();
+    }
+    function onOk(e) {
+        SaveData();
+    }
+    function onCancel(e) {
+        CloseWindow("cancel");
+    }
+</script>

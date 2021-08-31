@@ -1,0 +1,150 @@
+﻿@{
+    Layout = Layout = "~/Views/Shared/_Layout.cshtml"; ;
+}
+<div class="mini-splitter" style="width:100%;height:500px;">
+    <div size="240" showCollapseButton="true">
+        <div class="mini-toolbar" style="padding:2px;border-top:0;border-left:0;border-right:0;">
+            <span style="padding-left:5px;">名称：</span>
+            <input class="mini-textbox" style="width:100px;" />
+            <a class="mini-button" iconCls="icon-search" plain="true">查找</a>
+            @*<input type="button" value="测试" onclick="reload()"/>*@
+
+        </div>
+        <div class="mini-fit">
+            <ul id="tree1" class="mini-tree"  style="width:100%;height:100%;" url="@Url.Content("~/Content/data/deptTree.txt")"
+                showTreeIcon="true" textField="text" idField="id" parentField="parentid" resultAsTree="false"></ul>
+        </div>
+    </div>
+    <div showCollapseButton="true">
+        <div class="mini-toolbar" style="padding:2px;border-top:0;border-left:0;border-right:0;">
+
+            <a class="mini-button" iconCls="icon-add" plain="true" onclick="addRow()">新增</a>
+            <a class="mini-button" iconCls="icon-remove" plain="true" onclick="removeRow()">删除</a>
+            <span class="separator"></span>
+            <a class="mini-button" iconCls="icon-save" plain="true" onclick="saveData()">保存</a>
+        </div>
+        <div class="mini-fit">
+            <div id="grid1" class="mini-datagrid" style="width:100%;height:100%;"
+                 borderStyle="border:0;"
+                 url="/Menu/GetChildMenus"
+                 showFilterRow="false" allowCellSelect="true" allowCellEdit="true">
+                <div property="columns">
+                    <div field="m_id" width="60" headerAlign="center" allowSort="true">
+                        菜单编号
+                        <input property="editor" class="mini-textbox" style="width:100%;" />
+                    </div>  
+                    <div field="m_text" width="120" headerAlign="center" allowSort="true">
+                        菜单文本
+                        <input property="editor" class="mini-textbox" style="width:100%;" />
+                        <input id="nameFilter" property="filter" class="mini-textbox" onvaluechanged="onNameFilterChanged" style="width:100%;" />
+                    </div>
+                    <div field="m_url" width="250" headerAlign="center" allowSort="true">
+                        菜单URL
+                        <input property="editor" class="mini-textbox" style="width:100%;" />                        
+                    </div>
+                    <div field="m_iconCls" width="100" headerAlign="center" allowSort="true">
+                        菜单样式
+                        <input property="editor" class="mini-textbox" style="width:100%;" />
+                    </div>                                        
+                    <div field="m_create_time" width="100" headerAlign="center" dateFormat="yyyy-MM-dd HH:mm:ss" allowSort="true">创建时间</div>
+                    <div field="m_create_user" width="80" headerAlign="center" allowSort="true">创建者</div>
+                    <div field="m_update_time" width="80" headerAlign="center" dateFormat="yyyy-MM-dd HH:mm:ss" allowSort="true">更新时间</div>
+                    <div field="m_update_user" width="100" headerAlign="center" allowSort="true">更新者</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function reload() {
+        var data = {};
+        $.ajax({
+            type: "POST",
+            url: "/Menu/GetMenus",
+            async: false,
+            success: function (results) {
+                data = results.data;
+                alert("加载数据成功!" + data.length);
+            }
+        });
+        mini.parse();
+        var treegrid = mini.get("tree1");
+        treegrid.loading();
+        treegrid.setData(data);
+
+
+    }
+    var data = {};
+    $.ajax({
+        type: "POST",
+        url: "/Menu/GetMenus",
+        async: false,
+        success: function (results) {
+            data = results.data;
+            //alert("加载数据成功!" + data.length);
+            
+        }
+    });
+    
+    mini.parse();
+    var treegrid = mini.get("tree1");
+    var json = mini.encode(data);
+    json = json.replace("\"expanded\"", "expanded");
+    //alert(json);
+    //treegrid.loading();   
+    //treegrid.url = json;
+    //treegrid.setData(data);   
+    //treegrid.reload();
+    var grid = mini.get("grid1");
+    
+    treegrid.on("nodeselect", function (e) {
+        grid.load({ partenid: e.node.id });
+        //if (e.isLeaf) {
+        //    grid.load({ partenid: e.node.id });
+        //} else {
+        //    grid.setData([]);
+        //    grid.setTotalCount(0);
+        //}
+    });
+    function onNameFilterChanged(e) {
+        var textbox = e.sender;
+        var key = textbox.getValue();
+
+        var node = treegrid.getSelectedNode();
+        if (node) {
+            grid.load({ partenid: node.id, key: key });
+        }
+    }
+    function addRow() {
+        var node = treegrid.getSelectedNode();
+        if (node) {
+            var newRow = { name: "New Row" };
+            alert(node.id);
+            newRow.dept_id = node.id;
+            grid.addRow(newRow, 0);
+        }
+    }
+    function removeRow() {
+        var rows = grid.getSelecteds();
+        if (rows.length > 0) {
+            grid.removeRows(rows, true);
+        }
+    }
+    function saveData() {
+        var data = grid.getChanges();
+        var json = mini.encode(data);
+        grid.loading("保存中，请稍后......");
+        $.ajax({
+            url: "../data/AjaxService.aspx?method=SaveEmployees",
+            data: { data: json },
+            type: "post",
+            success: function (text) {
+                grid.reload();
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                alert(jqXHR.responseText);
+            }
+        });
+    }
+</script>

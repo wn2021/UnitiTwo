@@ -1,0 +1,275 @@
+﻿@{
+    Layout = Layout = "~/Views/Shared/_Layout.cshtml"; ;
+}
+<style>
+    .description {
+        padding-bottom: 30px;
+        font-family: Verdana;
+    }
+
+        .description h3 {
+            color: #CC0000;
+            font-size: 16px;
+            margin: 0 30px 10px 0px;
+            padding: 45px 0 8px;
+            /*background:url(titleback.png) no-repeat scroll left bottom transparent*/
+            border-bottom: solid 1px #888;
+        }
+
+        .description ul {
+            padding-left: 20px;
+        }
+</style>
+<div style="width:98%;">
+    <input name="historyflag" id="historyflag" class="mini-hidden" value="@Model.historyflag" />
+    <div style="width:100%;">
+        <div class="mini-toolbar" style="border-bottom:0;padding:0px;">
+            <table style="width:100%;">
+                <tr>
+                    <td><a id="btnCal" class="mini-button" onclick="calculate()">计算</a> 
+                        <span class="separator"></span>
+                        <a id="btnDel" class="mini-button" onclick="delivery()">已发放</a>
+                    </td>
+                    <td align="right">
+                        工资年份：<input id="strYear" class="mini-textbox" style="width:50px;" onvaluechanged="onYearChanged"/>
+                        工资月份：<input id="strYmonth" class="mini-combobox" style="width:80px;" textField="sysvalue" valueField="sysvalue"
+                                    url="/Common/GetMonths" value="" />
+                        所属公司：<input id="companyId" class="mini-combobox" style="width:120px;" textField="OrganizationName" valueField="OrganizationId" emptyText="请选择..."
+                                    url="/Common/GetCompanys" value="" showNullItem="true" nullItemText="请选择..." onvaluechanged="onCompanyChanged" />
+                        <span class="separator"></span>
+                        所属部门：<input id="departmentId" class="mini-combobox" style="width:120px;" textField="OrganizationName" valueField="OrganizationId" emptyText="请选择..."
+                                    value="" showNullItem="true" nullItemText="请选择..." />
+                        <span class="separator"></span>
+                        员工：<input id="employeeId" name="employeeId" class="mini-buttonedit" onbuttonclick="onButtonEdit" textName="" style="width:120px;" />
+                        <input id="employeeName" name="employeeName" class="mini-textbox asLabel" readOnly="true" style="width:100px;" />                       
+                        <a id="btnSearch" class="mini-button" onclick="search()">查询</a>                        
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    <div id="datagrid1" class="mini-datagrid" style="width:100%;height:400px;"
+         url="/Salary/QuerySalaries" idField="as_date" sallowResize="true" pageSize="20"  allowCellSelect="true"
+         multiSelect="true" >
+        <div property="columns">
+            <div type="checkcolumn"></div>
+            <div type="indexcolumn" width="20">No.</div>           
+            @*<div field="company_id" width="80px" headerAlign="center" allowSort="true"  align="center">公司编号</div>*@
+            <div field="company_name" width="100" headerAlign="center" allowSort="true" >所属公司</div>
+            <div field="department_name" width="100" headerAlign="center" allowSort="true" >所属部门</div>
+            <div field="employee_id" width="80" headerAlign="center" allowSort="true" align="center">员工编号</div>
+            <div field="employee_name" width="100" headerAlign="center" allowSort="true" >员工姓名</div>
+            <div field="ems_month" width="60" headerAlign="center" allowSort="true" align="center">月份</div>
+            <div field="ems_begin_date" width="80" headerAlign="center" allowSort="true" align="center" >起始日期</div>
+            <div field="ems_end_date" width="80" headerAlign="center" allowSort="true" align="center" >截止日期</div>
+            <div field="ems_month_salary" width="80" headerAlign="center" allowSort="true" align="right" dataType="currency" currencyUnit="￥"> 工资</div>   
+            <div field="ems_month_bonus" width="80" headerAlign="center" allowSort="true" align="right" dataType="currency" currencyUnit="￥"> 奖金</div>      
+            <div name="action" width="120"  headerAlign="center">明细</div>   
+        </div>
+    </div>
+    <div class="description">
+        <h3>薪资计算说明：</h3>
+        <ul>
+            <li>1. 薪资计算以考勤数据为基础</li>
+            <li>2. 薪资计算按月份进行，所有公司一起计算</li>
+            <li>3. 已发放薪资的月份不允许再计算</li>
+        </ul>
+    </div>
+</div>           
+<script>
+    mini.parse();
+    var grid = mini.get("datagrid1");
+    //设定默认选中月份
+    var year = mini.get("strYear");
+    var yMonth = mini.get("strYmonth");
+    var myDate = new Date();
+    var intY = myDate.getFullYear();
+    var intM = myDate.getMonth() + 1;
+    var strYmonth = intY + "-" + intM;
+    if (intM < 10) { strYmonth = intY + "-0" + intM; }
+    yMonth.setValue(strYmonth);
+    year.setValue(intY);
+
+    var historyflag = mini.get("historyflag");
+    var btnCal = mini.get("btnCal");
+    var btnDel = mini.get("btnDel");
+    if (historyflag.value == "1") {
+        btnCal.disable();
+        btnDel.disable();
+    }
+    //function onActionRenderer(e) {
+    //    var grid = e.sender;
+    //    var record = e.record;
+    //    //var uid = record._uid;
+    //    //var rowIndex = e.rowIndex;
+
+    //    var s = '<a class="New_Button" href="javascript:show(\'' + record.company_id + ',' + record.employee_id + ',' + record.ems_month + '\')">工资明细</a>'
+    //            //+ '<a class="Edit_Button" href="javascript:editRow(\'' + uid + '\')">工资明细</a>'
+    //            + '<a class="Delete_Button" href="javascript:bonus(\'' + record.company_id + ',' + record.employee_id + ',' + record.ems_month + '\')">奖金明细</a>';
+
+    //    return s;
+    //}
+    grid.on("drawcell", function (e) {
+        var record = e.record,
+            column = e.column,
+            field = e.field,
+            value = e.value;
+
+        //action列，超连接操作按钮
+        if (column.name == "action") {
+            e.cellStyle = "text-align:center";
+            e.cellHtml = '<a   class="mini-button" style="width:60px;margin-right:5px; "   href="javascript:show(\'' + record.company_id + ',' + record.employee_id + ',' + record.ems_month + '\')">工资明细</a>'
+            + '<a   class="mini-button" style="width:60px;"   href="javascript:bonus(\'' + record.company_id + ',' + record.employee_id + ',' + record.ems_month + '\')">奖金明细</a>'
+        }
+    });
+    //加载画面
+    var condition = { salaryMonth: strYmonth};
+    grid.load({ condition: condition, historyflag: historyflag.value });
+
+    //计算
+    function calculate() {
+        //if (!grid.data || grid.data.length == 0) { return; }
+        var strYmonth = yMonth.getValue();
+        if (!strYmonth || strYmonth == "") {
+            mini.alert("请选择考勤月份！");
+            return;
+        }
+        grid.loading("操作中，请稍后......");
+        $.ajax({
+            url: "/Salary/CalculateSalary?strYmonth=" + strYmonth,
+            type: "post",
+            success: function (text) {
+                search();
+            }
+        });
+    }
+    //年份值改变
+    function onYearChanged() {
+        var intYear = year.getValue();
+        yMonth.setValue("");
+        var url = "/Common/GetMonths?intYear=" + intYear;
+        yMonth.setUrl(url);
+        yMonth.select(0);
+    }
+    //查询
+    var cmbCmp = mini.get("companyId");
+    var cmbDep = mini.get("departmentId");
+    var txtEmp = mini.get("employeeId");
+    //公司选择下拉框改变
+    function onCompanyChanged(e) {
+        var cmpId = cmbCmp.getValue();
+        cmbDep.setValue("");
+        var url = "/Common/GetDepartments?companyid=" + cmpId;
+        cmbDep.setUrl(url);
+        cmbDep.select(0);
+    }
+    //选择员工按钮
+    function onButtonEdit(e) {
+        var btnEdit = this;
+        var lblName = mini.get("employeeName");
+        var cardNumber = mini.get("cardNumber");
+        var companyId = mini.get("companyId").value;
+        if (companyId == "") {
+            mini.alert("请先选择所属公司！");
+            return;
+        }
+        var departmentId = mini.get("departmentId").value;
+        mini.open({
+            url: "/Common/SelectEmployee?companyId=" + companyId + "&departmentId=" + departmentId,
+            title: "选择列表",
+            width: '80%',
+            height: '80%',
+            showMaxButton: true,
+            onload: function () {
+                var iframe = this.getIFrameEl();
+
+            },
+            ondestroy: function (action) {
+                if (action == "ok") {
+                    var iframe = this.getIFrameEl();
+                    var data = iframe.contentWindow.GetData();
+                    data = mini.clone(data);    //必须
+                    if (data) {
+                        btnEdit.setValue(data.employeeId);
+                        btnEdit.setText(data.employeeId);
+                        lblName.setValue(data.employeeName);
+                        lblName.setText(data.employeeName);
+                        cardNumber.setValue(data.ue_card_number);
+                        setButtonState("1");
+                    }
+                }
+
+            }
+        });
+
+    }
+    function search() {
+        var strYmonth = yMonth.getValue();
+        var condition = { salaryMonth: strYmonth, companyId: cmbCmp.getValue(), departmentId: cmbDep.getValue(), employeeId: txtEmp .text};
+        grid.load({ condition: condition, historyflag: historyflag.value });
+    }
+    function delivery() {
+        var rows = grid.getSelecteds();
+        if (rows.length > 0) {
+            mini.confirm("发放后将不能再重新计算，确定所选行薪资已发放？", "确认",
+                function (action) {
+                    if (action == "ok") {
+                        var json = mini.encode(rows);
+                        $.ajax({
+                            url: "/Salary/SetDeliveried",
+                            data: { data: json },
+                            type: "post",
+                            success: function (result) {
+                                if (result.success) {
+                                    search();
+                                } else { mini.alert(result.message); }
+                            },
+                            error: function (jqXHR, textStatus, errorThrown) {
+                                if (options.callback(false) !== false) {
+                                    alert("HTTP Error\n\n" + jqXHR.responseText);
+                                }
+                            },
+                            complete: function () {
+                                grid.unmask();
+                            }
+                        });
+                    }
+                });
+        } else {
+            mini.alert("请选中至少一条记录");
+        }
+    }
+    function show(strKey) {
+        mini.open({
+            targetWindow: window,
+
+            url: "/Salary/SalaryDetail?strKey=" + strKey ,
+            title: "月度工资明细", width: 1200, height: 600,
+            onload: function () {
+                var iframe = this.getIFrameEl();
+                iframe.contentWindow.OpenContext = { parent: window, popwin: this };
+
+            },
+            ondestroy: function (action) {
+                grid.reload();
+            }
+        });
+    }
+    function bonus(strKey) {
+        mini.open({
+            targetWindow: window,
+
+            url: "/Salary/BonusDetail?strKey=" + strKey,
+            title: "月度奖金明细", width: 1200, height: 600,
+            onload: function () {
+                var iframe = this.getIFrameEl();
+                iframe.contentWindow.OpenContext = { parent: window, popwin: this };
+
+            },
+            ondestroy: function (action) {
+                grid.reload();
+            }
+        });
+    }
+    
+</script>

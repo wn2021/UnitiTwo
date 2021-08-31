@@ -1,0 +1,107 @@
+﻿@{
+    Layout = Layout = "~/Views/Shared/_Layout.cshtml"; ;
+}
+<style>
+    .description
+{
+    padding-bottom:30px;
+   
+    font-family:Verdana;
+}
+.description h3
+{
+    color:#CC0000;
+    font-size:16px;
+    margin:0 30px 10px 0px;
+    padding:45px 0 8px;
+    /*background:url(titleback.png) no-repeat scroll left bottom transparent*/
+    border-bottom:solid 1px #888;
+}
+        .description ul {
+           padding-left:20px;
+        }
+</style>
+<div style="width:100%; ">
+    <div style="width:100%;">
+        <div class="mini-toolbar" style="border-bottom:0;padding:0px;">
+            <table style="width:100%;">
+                <tr>
+                    
+                    <td style="white-space:nowrap;">
+                        考勤月份：<input id="strYmonth" class="mini-combobox" style="width:150px;" textField="sysvalue" valueField="sysvalue"
+                                    url="/Common/GetMonths" value="" />
+                        <a id="btnCollect" class="mini-button" onclick="collect()">考勤收集</a>
+                    </td>
+                </tr>
+                
+            </table>
+        </div>
+        <div class="description">
+            <h3>考勤规则说明：</h3>
+            <ul>
+                <li>1. 工作时长不足5小时按缺勤处理</li>
+                <li>2. 缺勤，事假和婚嫁扣全部工资</li>
+                <li>3. 病假扣1/2公司</li>
+                <li>4. 产假扣3/4工资</li>
+                <li>5. 年假不扣工资</li>
+                <li>6. 按照国家法律规定，周末加班双倍工资；节假日加班3倍工资</li>
+                <li>7. 公司保留调休权力，员工应按照公司调休计划出勤和休息</li>
+            </ul>
+        </div>
+    </div>
+    @*<div id="htmlContent" style="padding-left:10px;display:none;">数据收集中...<div style="background:@Url.Content("/Content/res/images/wait.gif") no-repeat 0px 50%;width:230px;height:30px;"></div></div>*@
+    
+</div>
+
+<script>
+    mini.parse();
+    var btn = mini.get("btnCollect");
+    var yMonth = mini.get("strYmonth");
+    var myDate = new Date();
+    var intY = myDate.getFullYear();
+    var intM = myDate.getMonth() + 1;
+    var strYmonth = intY + "-" + intM;
+    if (intM < 10) { strYmonth = intY + "-0" + intM; }
+    yMonth.setValue(strYmonth);
+
+    function collect() {
+        var strYmonth = yMonth.getValue();
+        if (!strYmonth || strYmonth == "") {
+            mini.alert("请选择考勤月份！");
+            return;
+        }
+        //showMsg();
+        $.ajax({
+            url: "/Attendance/CollectAtt?strYmonth=" + strYmonth,
+            type: "post",
+            success: function (text) {
+                if (text.success) {
+                    //alert(text.result)
+                    mini.alert("数据收集成功！");
+                } else {
+                    mini.alert(text.message);
+                }
+                //closeMsg();
+                btn.enable();
+            }
+        });
+    }
+    function showMsg() {
+        var htmlContent = document.getElementById("htmlContent");
+        htmlContent.style.display = "";
+        mini.showMessageBox({
+            width: 250,
+            title: "考勤收集",
+            html: htmlContent,
+            showModal: false,
+            callback: function() {
+                btn.enable();
+            }
+        });
+    }
+    function closeMsg() {
+        btn.disable();
+        var htmlContent = document.getElementById("htmlContent");
+        htmlContent.style.display = "none";
+    }
+</script>

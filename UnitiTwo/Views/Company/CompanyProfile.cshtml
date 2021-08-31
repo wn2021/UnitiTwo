@@ -1,0 +1,67 @@
+﻿@{
+    ViewBag.Title = "CompanyProfile";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<form id="form1" method="post">
+    <div class="mini-fit'" style="width: 100%;">
+        <input name="companyId" id="companyId" class="mini-hidden" value="@Model.uc_id" />
+        <textarea class="mini-textarea" id="profile" name="profile" style="width:90%;height:400px;margin-left:5%;margin-top:20px;" value="@Model.uc_description"></textarea>
+    </div>
+    <div style="text-align:center;padding:10px;">
+        <a class="mini-button" onclick="onOk" style="width:60px;margin-right:20px;">确定</a>
+        <a class="mini-button" onclick="onCancel" style="width:60px;">取消</a>
+    </div>
+</form>
+
+@section scripts{
+
+<script type="text/javascript">
+    document.write('<link href="/Content/miniui/themes/default/miniui.css" rel="stylesheet" type="text/css" />');
+    mini.parse();
+    var form = new mini.Form("form1");
+   
+
+    function GetData() {
+        var o = form.getData();
+        return o;
+    }
+    function CloseWindow(action) {
+        if (action == "close" && form.isChanged()) {
+            if (confirm("数据被修改了，是否先保存？")) {
+                return false;
+            }
+        }
+        if (window.CloseOwnerWindow) return window.CloseOwnerWindow(action);
+        else window.close();
+    }
+    function onOk(e) {
+        SaveData();
+    }
+    function onCancel(e) {
+        CloseWindow("cancel");
+    }
+    function SaveData() {
+        var form = new mini.Form("#form1");
+        var companyId = mini.get("companyId");
+        var id=companyId.getValue();
+        var pf = mini.get("profile");
+        var profile = pf.getValue();
+        alert("处理前的strContent为\r\n" + profile);
+
+        profile = profile.replace(/\r\n/g, 'br'); //IE9、FF、chrome
+
+        profile = profile.replace(/\n/g, 'br'); //IE7-8
+
+        alert("转换之后的html代码为\r\n" + profile);
+        $.ajax({
+            url: "/Company/ProfileSave?id=" + id + "&profile=" + profile,
+            type: "post",
+            success: function (text) {
+                //alert("提交成功，返回结果:" + text);
+                CloseWindow("提交成功");
+            }
+        });
+    }
+</script>
+    }

@@ -1,0 +1,5 @@
+D:\Learn\miniUI.NET\UnitiTwo\Log\bin\Debug\Log.dll
+D:\Learn\miniUI.NET\UnitiTwo\Log\bin\Debug\Log.pdb
+D:\Learn\miniUI.NET\UnitiTwo\Log\obj\Debug\Log.csprojResolveAssemblyReference.cache
+D:\Learn\miniUI.NET\UnitiTwo\Log\obj\Debug\Log.dll
+D:\Learn\miniUI.NET\UnitiTwo\Log\obj\Debug\Log.pdb

@@ -1,0 +1,160 @@
+﻿@{
+    Layout = Layout = "~/Views/Shared/_Layout.cshtml"; ;
+}
+<style>
+    .invalid-row {
+        background-color:lightgray;
+        color: red;
+    }
+</style>
+<div style="width:100%;">
+    <div class="mini-toolbar" style="border-bottom:0;padding:0px;">
+        <table style="width:100%;">
+            <tr>
+                <td style="width:100%;">
+                    <a class="mini-button" iconCls="icon-add" onclick="add()">添加</a>
+                    <a class="mini-button" iconCls="icon-edit" onclick="edit()">编辑</a>
+                    <a class="mini-button" iconCls="icon-remove" onclick="remove()">删除</a> 
+                </td>
+                <td style="white-space:nowrap;">
+                    状态：<input id="cmbStatus" class="mini-combobox" style="width:150px;" textField="text" valueField="id" emptyText="请选择..."
+                                showNullItem="true" nullItemText="请选择..." />
+                    <span class="separator"></span>
+                    <input id="key" class="mini-textbox" emptyText="请输入文本" style="width:150px;" onenter="onKeyEnter" />
+                    <a class="mini-button" onclick="search()">查询</a>
+                </td>
+            </tr>
+        </table>
+    </div>
+</div>
+<div id="datagrid1" class="mini-datagrid" style="width:100%;height:400px;"
+     url="/Menu/GetMenuList" idField="solution_id"
+     allowResize="true" pageSize="10"
+     allowCellSelect="true" multiSelect="true">
+    <div property="columns">
+        <div type="checkcolumn"></div>
+        <div field="solution_name" width="60" headerAlign="center" allowSort="true" >方案名称</div>
+        <div field="solution_summary" width="80" headerAlign="center" allowSort="true" >方案简介</div>        
+        <div field="solution_status" width="150"headerAlign="center" allowSort="true">方案状态</div>        
+        <div field="solution_point" width="80" headerAlign="center" allowSort="true">方案分值</div>
+        <div field="solution_small_image" width="150" headerAlign="center" allowSort="true">方案图标</div>
+        <div name="action" width="120" headerAlign="center">详细</div>   
+    </div>
+</div>
+<script language="javascript" type="text/javascript">
+    mini.parse();
+    var grid = mini.get("datagrid1");
+    grid.on("load", function (res) {
+        if (res != null && res.data.length > 0) {
+            for (var x = 0; x < res.data.length; x++) {
+                var row = res.data[x];
+                if (row.m_status == "9") {
+                    grid.addRowCls(grid.getRow(x), 'invalid-row');
+                }
+            }
+        }
+      }
+    );
+    grid.load();
+    grid.on("drawcell", function (e) {
+        var record = e.record,
+            column = e.column,
+            field = e.field,
+            value = e.value;
+
+        //action列，超连接操作按钮
+        if (column.name == "action") {
+            e.cellStyle = "text-align:center";
+            e.cellHtml = '<a  class="mini-button" style="width:60px;margin-right:5px; "   href="javascript:show(\'' + record.solution_id + '\')">方案详细说明</a>'
+        }
+    });
+    //查询
+        function search() {
+            var key = mini.get("key").getValue();
+            var chk = mini.get("cmbStatus");
+            var status = chk.getValue();
+            grid.load({ key: key, status: status });
+        }
+
+        function onKeyEnter(e) {
+            search();
+        }
+    //新增
+        function add() {
+            mini.open({
+                targetWindow: window,
+
+                url: "/Menu/MenuEdit",
+                title: "添加菜单", width: 500, height: 400,
+                onload: function () {
+                    var iframe = this.getIFrameEl();
+                    var data = { action: "new" };
+                    iframe.contentWindow.OpenContext = { parent: window, popwin: this };
+                },
+                ondestroy: function (action) {
+
+                    grid.reload();
+                }
+            });
+        }
+    //删除
+        function remove() {
+            var rows = grid.getSelecteds();
+            if (rows.length > 0) {
+                mini.confirm("确定删除选中记录？", "确认删除", function (action) {
+                    if (action == "ok") {
+                        var ids = [];
+                        for (var i = 0, l = rows.length; i < l; i++) {
+                            var r = rows[i];
+                            if (r.m_status != "9") {
+                                ids.push(r.m_id);
+                            }
+                        }
+                        if (ids.length == 0) { mini.alert("没有需要删除的数据！"); return; }
+                        var id = ids.join(',');
+                        grid.loading("操作中，请稍后......");
+                        $.ajax({
+                            url: "/Menu/MenuDel?menuId=" + id,
+                            type: "post",
+                            success: function (text) {
+                                if (text.return) {
+                                    if (text.return > 0) {
+                                        mini.alert("删除成功。");
+                                    }
+                                } else {
+                                    mini.alert(text.toString());
+                                }
+                                grid.reload();
+                            },
+                            error: function () {
+                            }
+                        });
+                    }
+                });
+            } else {
+                mini.alert("请选中至少一条记录");
+            }
+        }
+    //编辑
+        function edit() {
+            var row = grid.getSelected();
+            if (row) {
+                mini.open({
+                    url: "/Menu/MenuEdit?id=" + row.m_id,
+                    title: "编辑菜单", width: 500, height: 400,
+                    onload: function () {
+                        var iframe = this.getIFrameEl();
+                        var data = { action: "edit" };
+                        iframe.contentWindow.SetData(data);
+                    },
+                    ondestroy: function (action) {
+                        grid.reload();
+
+                    }
+                });
+
+            } else {
+                mini.alert("请选中一条记录");
+            }
+        }
+</script>

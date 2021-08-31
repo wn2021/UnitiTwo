@@ -1,0 +1,131 @@
+﻿@{
+    ViewBag.Title = "CompanyEdit";
+    //Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<style type="text/css">
+    fieldset {
+        border: solid 1px #aaa;
+    }
+
+    .hideFieldset {
+        border-left: 0;
+        border-right: 0;
+        border-bottom: 0;
+    }
+
+        .hideFieldset .fieldset-body {
+            display: none;
+        }
+</style>
+
+<form id="form1" method="post">
+    <div class="mini-fit'">
+        <input name="uc_id" id="uc_id" class="mini-hidden" value="@Model.uc_id" />
+        <fieldset style="width:700px;border:solid 1px #aaa;position:relative;">
+            <legend>基本信息</legend>
+            <table border="0" cellpadding="2" cellspacing="0" class="EditTable" style="width: 100%">
+                <tr>
+                    <td class="tdLabel" style="width: 30%;"> 公司名称：</td>
+                    <td class="tdText" style="width: 70%;"><input class="mini-textbox" id="uc_name" name="uc_name" style="width: 200px;" value="@Model.uc_name"  required="true"></td>
+                </tr>
+                <tr>
+                    <td class="tdLabel" style="width: 30%;">  联系地址： </td>
+                    <td class="tdText" style="width: 70%;"> <input class="mini-textbox" id="uc_current_address" name="uc_current_address" style="width: 200px;" value="@Model.uc_current_address"  required="true">  </td>
+                </tr>
+                <tr>
+                    <td class="tdLabel" style="width: 30%;">  联系电话： </td>
+                    <td class="tdText" style="width: 70%;"> <input class="mini-textbox" id="uc_phone" name="uc_phone" style="width: 200px;" value="@Model.uc_phone"  required="true">  </td>
+                </tr>
+                <tr>
+                    <td class="tdLabel" style="width: 30%;">  公司状态： </td>
+                    <td class="tdText" style="width: 70%;">
+                        <input id="uc_status" class="mini-combobox" name="uc_status" style="width:100%;" textField="description" valueField="sysvalue"
+                               url="/Common/GetSystemInfoList?sysid=1003" value="@Model.uc_status" /> 
+                    </td>
+                </tr>
+                <tr>
+                    <td class="tdLabel" style="width: 30%;">  注销时间： </td>
+                    <td class="tdText" style="width: 70%;"> <input class="mini-textbox" id="uc_destroy_time" name="uc_destroy_time" style="width: 200px;" value="@Model.uc_destroy_time" dateFormat="yyyy-MM-dd HH:mm:ss">  </td>
+                </tr>
+            </table>
+            </fieldset>
+        <fieldset id="fd2" style="width:700px;border:solid 1px #aaa;position:relative;">
+            <legend><input type="checkbox" checked id="checkbox1" onclick="toggleFieldSet(this, 'fd2')" hideFocus />注册信息</legend>
+            <div class="fieldset-body">
+                <table border="0" cellpadding="2" cellspacing="0" class="EditTable" style="width: 100%">
+                    <tr>
+                        <td class="tdLabel" style="width: 15%;"> 公司法人：</td>
+                        <td class="tdText" style="width: 35%;"><input class="mini-textbox" id="uc_corporation" name="uc_corporation" style="width: 200px;" value="@Model.uc_corporation"></td>
+                        <td class="tdLabel" style="width: 15%;"> 税务编号：</td>
+                        <td class="tdText" style="width: 35%;"><input class="mini-textbox" id="uc_tax_no" name="uc_tax_no" style="width: 200px;" value="@Model.uc_tax_no"></td>
+                    </tr>
+                    <tr>
+                        <td class="tdLabel" style="width: 15%;">  注册资金(万)： </td>
+                        <td class="tdText" style="width: 35%;"> <input class="mini-textbox" id="uc_register_capital" name="uc_register_capital" style="width: 200px;" value="@Model.uc_register_capital">  </td>
+                        <td class="tdLabel" style="width: 15%;">  注册时间： </td>
+                        <td class="tdText" style="width: 35%;"> <input class="mini-datepicker" id="uc_register_time" name="uc_register_time" style="width: 200px;" value="@Model.uc_register_time" format="yyyy-MM-dd" valueType="string">  </td>
+                    </tr>
+                    <tr>
+                        <td class="tdLabel" style="width: 15%;">  注册地址： </td>
+                        <td class="tdText" style="width: 85%;" colspan="3"> <input class="mini-textbox" id="uc_register_address" name="uc_register_address" style="width: 500px;" value="@Model.uc_register_address">  </td>
+                    </tr>
+
+                </table>
+                </div>
+</fieldset>
+            <div style="text-align:center;padding:10px;">
+                <a class="mini-button" onclick="onOk" style="width:60px;margin-right:20px;">确定</a>
+                <a class="mini-button" onclick="onCancel" style="width:60px;">取消</a>
+            </div>
+</div>
+</form>
+
+
+<script type="text/javascript">
+
+    mini.parse();  
+    var form = new mini.Form("form1");
+    var st = mini.get("uc_status");
+    st.disable();
+    var dt = mini.get("uc_destroy_time");
+    dt.disable();
+    function SaveData() {
+        var form = new mini.Form("#form1");
+        form.validate();
+        if (form.isValid() == false) return;
+        var data = form.getData();//获取表单多个控件的数据
+        $.ajax({
+            url: "/Company/CompanySave",
+            type: "post",
+            data: data,
+            success: function (text) {
+                //alert("提交成功，返回结果:" + text);
+                CloseWindow("提交成功");
+            }
+        });
+    }
+
+    function GetData() {
+        var o = form.getData();
+        return o;
+    }
+    function CloseWindow(action) {
+        if (action == "close" && form.isChanged()) {
+            if (confirm("数据被修改了，是否先保存？")) {
+                return false;
+            }
+        }
+        if (window.CloseOwnerWindow) return window.CloseOwnerWindow(action);
+        else window.close();
+    }
+    function onOk(e) {
+        SaveData();
+    }
+    function onCancel(e) {
+        CloseWindow("cancel");
+    }
+    function toggleFieldSet(ck, id) {
+        var dom = document.getElementById(id);
+        dom.className = !ck.checked ? "hideFieldset" : "";
+    }
+</script>

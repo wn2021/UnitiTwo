@@ -1,0 +1,5 @@
+D:\Learn\miniUI.NET\UnitiTwo\DataAccess\bin\Release\DataAccess.dll
+D:\Learn\miniUI.NET\UnitiTwo\DataAccess\bin\Release\DataAccess.pdb
+D:\Learn\miniUI.NET\UnitiTwo\DataAccess\obj\Release\DataAccess.csprojResolveAssemblyReference.cache
+D:\Learn\miniUI.NET\UnitiTwo\DataAccess\obj\Release\DataAccess.dll
+D:\Learn\miniUI.NET\UnitiTwo\DataAccess\obj\Release\DataAccess.pdb

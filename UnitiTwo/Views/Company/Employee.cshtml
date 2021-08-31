@@ -1,0 +1,343 @@
+﻿@{
+    Layout = Layout = "~/Views/Shared/_Layout.cshtml"; ;
+}
+<style>
+    .invalid-row {
+        background-color:yellow;
+        color:red;
+    }
+</style>
+<div style="width:100%;">
+    <div class="mini-toolbar" style="border-bottom:0;padding:0px;">
+        <table style="width:100%;">
+            <tr>
+                <td style="white-space:nowrap;">
+                    所属公司：<input id="companyId" class="mini-combobox" style="width:150px;" textField="OrganizationName" valueField="OrganizationId" emptyText="请选择..."
+                                url="/Common/GetCompanys" value="" showNullItem="true" nullItemText="请选择..."  onvaluechanged="onCompanyChanged"/>
+                    <span class="separator"></span>
+                    所属部门：<input id="departmentId" class="mini-combobox" style="width:150px;" textField="OrganizationName" valueField="OrganizationId" emptyText="请选择..."
+                                value="" showNullItem="true" nullItemText="请选择..." onvaluechanged="onDepartChanged" />
+                    <span class="separator"></span>
+                    职位级别：<input id="positionLevel" class="mini-combobox" style="width:150px;" textField="OrganizationName" valueField="OrganizationId" emptyText="请选择..."
+                                value="" showNullItem="true" nullItemText="请选择..." />
+                    <span class="separator"></span>
+                    员工姓名：<input id="employeeName" name="companyAddress" class="mini-textbox" emptyText="请输入文本" style="width:150px;" />
+                    <a class="mini-button" onclick="search()">查询</a>
+                </td>
+            </tr>
+        </table>
+    </div>
+</div>
+
+<div id="datagrid1" class="mini-datagrid" style="width:100%;height:280px;" allowResize="true" pageSize="10"
+     url="/Company/EmployeeList" idField="employeeId" multiSelect="false" pagesize="20" showpager="true">
+    <div property="columns">
+        <div type="checkcolumn"></div>
+        <div field="employeeId" width="100" headerAlign="center" allowSort="true">员工编号</div>
+        <div field="employeeName" width="100" headerAlign="center" allowSort="true">员工姓名</div>
+        <div field="companyName" width="150" headerAlign="center" allowSort="true">所属公司</div>
+        <div field="departName" width="100" headerAlign="center" allowSort="true">所属部门</div>
+        <div field="positionLevel" width="100" headerAlign="center" allowSort="true">职位级别</div>
+        <div field="ue_entry_time" width="100" headerAlign="center" allowSort="true" dateFormat="yyyy-MM-dd">入职日期</div>
+    </div>
+</div>
+<div style="width:100%;border:solid 1px #aaa;margin-top:5px;">
+    <div style="border-bottom:0;padding:0px;width:100%;">
+        <table style="width:100%;">
+            <tr>
+                <td>
+                    <a id="btnAdd" class="mini-button" iconCls="icon-add" onclick="add()">添加</a>
+                    <a id="btnEdit" class="mini-button" iconCls="icon-add" onclick="edit()">编辑</a>
+                    <a id="btnRemove" class="mini-button" iconCls="icon-remove" onclick="remove()">删除</a>
+                    <a id="btnSave" class="mini-button" iconCls="icon-save" onclick="save()">保存</a>
+                    <a id="btnCancel" class="mini-button" iconCls="icon-cancel" onclick="cancel()">取消</a>
+                </td>
+            </tr>
+        </table>
+    </div>
+</div>
+<fieldset style="width:90%;border:solid 1px #aaa;margin-top:1px;position:relative;">
+    <legend>员工详细信息</legend>
+    <div id="editForm1" style="padding:2px;">
+        <table style="width:100%;">
+            <tr>
+                <td style="width:80px;">员工编号：</td>
+                <td style="width:150px;"><input id="ue_id" name="ue_id" class="mini-textbox"/></td>
+                <td style="width:80px;">员工姓名：</td>
+                <td style="width:150px;"><input id="ue_name" name="ue_name" class="mini-textbox" required="true"  /></td>
+                <td style="width:80px;">证件号码：</td>
+                <td style="width:150px;"><input id="ue_idcrad_number" name="ue_idcrad_number" class="mini-textbox" 
+                                                onvalidation="onIDCardsValidation"required="true"  /></td>
+            </tr>
+            <tr>
+                <td>所属公司：</td>
+                <td><input id="ue_company_id" name="ue_company_id" class="mini-combobox"  url="/Common/GetCompanys"
+                      textField="OrganizationName" valueField="OrganizationId" onvaluechanged="ondCompanyChanged" required="true" /></td>
+                <td>所属部门：</td>
+                <td><input id="ue_department_id" name="ue_department_id" class="mini-combobox"  url="/Common/GetDepartments"
+                           textField="OrganizationName" valueField="OrganizationId"
+                           onvaluechanged="ondDepartChanged" required="true" /></td>
+                <td>职位级别：</td>
+                <td><input id="ue_position_level" name="ue_position_level" class="mini-combobox"  url="/Common/GetLevels"
+                           textField="OrganizationName" valueField="OrganizationId" required="true"  /></td>
+            </tr>
+            <tr>
+                <td>员工状态：</td>
+                <td><input id="ue_status" name="ue_status" class="mini-combobox" url="/Common/GetSystemInfoList?sysid=1004" 
+                           textField="description" valueField="sysvalue" /></td>
+                <td>入职日期：</td>
+                <td><input id="ue_entry_time" name="ue_entry_time" class="mini-datepicker" valueType="string" required="true" /></td>
+                <td>离职日期：</td>
+                <td><input id="ue_exit_time" name="ue_exit_time" class="mini-datepicker" valueType="string"/></td>                
+            </tr>
+            <tr>
+                <td>员工卡号：</td>
+                <td><input id="ue_card_number" name="ue_card_number" class="mini-textbox"  /></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>性别：</td>
+                <td><input id="ue_gender" name="ue_gender" class="mini-combobox" url="/Common/GetSystemInfoList?sysid=2001"  
+                       textField="description" valueField="sysvalue" required="true"  /></td>
+                <td>年龄：</td>
+                <td><input id="ue_age" name="ue_age" class="mini-spinner" minValue="0" maxValue="200"  vtype="int" required="true" /></td>
+                <td>出生日期：</td>
+                <td><input id="ue_birthday" name="ue_birthday" class="mini-datepicker" valueType="string" required="true"  /></td>
+            </tr>
+            <tr>
+                <td>联系电话：</td>
+                <td><input id="ue_phone" name="ue_phone" class="mini-textbox" required="true" vtype="phone"/></td>
+                <td>邮箱：</td>
+                <td colspan="3"><input style="width:80%;" id="ue_email" name="ue_email" class="mini-textbox" vtype="email"/></td>                
+            </tr>
+            <tr>
+                <td>联系地址：</td>              
+                <td colspan="5" ><input style="width:85%;" id="ue_address" name="ue_address" class="mini-textbox" /></td>
+            </tr>
+        </table>
+    </div>
+</fieldset>
+
+<script>
+
+    mini.parse();
+
+    var grid = mini.get("datagrid1");
+    //默认选中第一行
+    //grid.on("load", function () { grid.select(0) });
+    grid.on("load", function (res) {
+        if (res != null && res.data.length > 0) {
+            for (var x = 0; x < res.data.length; x++) {
+                var row = res.data[x];
+                if (row.ue_status == "99") {
+                    grid.addRowCls(grid.getRow(x), 'invalid-row');
+                }
+            }
+        }
+    }
+);
+
+    //绑定表单
+    var form = new mini.Form("#editForm1");
+    var db = new mini.DataBinding();
+    db.bindForm("editForm1", grid);
+
+    //画面初始化明细部分不可编辑
+    setFormStatus(false);
+    setButtonStates("N");
+
+    function search() {      
+        var companyId = mini.get("companyId").value;
+        var departmentId = mini.get("departmentId").value;
+        var positionLevel = mini.get("positionLevel").value;
+        var employeeName = mini.get("employeeName").value;
+        var companySearch = { companyId: companyId, departmentId: departmentId, positionLevel: positionLevel, employeeName: employeeName };
+        grid.load(companySearch);
+        //绑定表单
+        var db = new mini.DataBinding();
+        db.bindForm("editForm1", grid);
+    }
+    $("#key").bind("keydown", function (e) {
+        if (e.keyCode == 13) {
+            search();
+        }
+    });
+
+    //----查询部分下拉框联动
+    var companyCmb = mini.get("companyId");
+    var deprtCmb = mini.get("departmentId");
+    var levelCmb = mini.get("positionLevel");
+    //公司选择下拉框改变
+    function onCompanyChanged(e) {
+        var cmpId = companyCmb.getValue();
+        deprtCmb.setValue("");
+        var url = "/Common/GetDepartments?companyid=" + cmpId;
+        deprtCmb.setUrl(url);
+        deprtCmb.select(0);
+    }
+    //部门下拉框改变
+    function onDepartChanged(e) {
+        var cmpId = companyCmb.getValue();
+        var depId = deprtCmb.getValue();
+        levelCmb.setValue("");
+        var url = "/Common/GetLevels?companyid=" + cmpId + "&depid=" + depId;
+        levelCmb.setUrl(url);
+        levelCmb.select(0);
+    }
+
+    //--输入部分下拉框联动
+    var eCompany = mini.get("ue_company_id");
+    var eDepart = mini.get("ue_department_id");
+    var eLevel = mini.get("ue_position_level");
+    //公司下拉框改变选值
+    function ondCompanyChanged() {
+        var cmpId = eCompany.getValue();
+        eDepart.setValue("");
+        var url = "/Common/GetDepartments?companyid=" + cmpId;
+        eDepart.setUrl(url);
+    }
+    //部门下拉框改变选值
+    function ondDepartChanged(e) {
+        var cmpId = eCompany.getValue();
+        var depId = eDepart.getValue();
+        eLevel.setValue("");
+        var url = "/Common/GetLevels?companyid=" + cmpId + "&depid=" + depId;
+        eLevel.setUrl(url);
+    }
+    //设置输入部分可编辑状态
+    function setFormStatus(isEnable) {
+        var form = new mini.Form("#editForm1");
+        form.setEnabled(isEnable);
+        var e_id = mini.get("ue_id");
+        var e_status = mini.get("ue_status");
+        e_id.disable();
+        e_status.disable();       
+    }
+    //设置按钮状态
+    function setButtonStates(operateType)
+    {
+        var btnA = mini.get("btnAdd");
+        var btnE = mini.get("btnEdit");
+        var btnR = mini.get("btnRemove");
+        var btnS = mini.get("btnSave");
+        var btnC = mini.get("btnCancel");
+        if (operateType == "A" || operateType == "D" || operateType == "E") {
+            btnA.disable();
+            btnE.disable();
+            btnR.disable();
+            btnS.enable();
+            btnC.enable();
+        } else{
+            btnA.enable();
+            btnE.enable();
+            btnR.enable();
+            btnS.disable();
+            btnC.disable();
+        }
+    }
+    
+    //删除
+    function remove() {
+        var row = grid.getSelected();
+        if (row) {
+            if (row.ue_status == "99") {
+                mini.alert("已删除数据不用再删除！");
+                return;
+            }
+            mini.confirm("确定删除选中记录？", "确认删除", function (action) {
+                if (action == "ok") {
+                    var empid = row.employeeId;
+                    $.ajax({
+                        url: "/Company/EmployeeDel?empid=" + empid,
+                        type: "post",
+                        success: function (text) {
+                            if (text.return) {
+                                grid.reload();
+                                setFormStatus(false);
+                                setButtonStates("S");
+                            } else {
+                                mini.alert(text.toString());
+                            }
+                        }
+                    });
+                }
+            });
+        } else {
+            mini.alert("请选择一条数据！");
+        }
+       
+    }
+    //修改
+    function edit() {
+        var row = grid.getSelected();
+        if (row) {
+            if (row.ue_status == "99") {
+                mini.alert("已删除数据，不允许编辑！");
+                return;
+            }
+            setFormStatus(true);
+            setButtonStates("E");
+        } else {
+            mini.alert("请选择一条数据进行编辑！");
+        }
+    }
+
+    //新建
+    function add() {
+        var newRow = { ue_name: "新员工", ue_company_id: companyCmb.getValue(), ue_department_id: deprtCmb.getValue(),e_status:"10" };
+        grid.addRow(newRow, 0);
+        grid.deselectAll();
+        grid.select(newRow);
+        setFormStatus(true);
+        setButtonStates("A");
+    }
+    //保存
+    function save() {
+        var form = new mini.Form("#editForm1");
+        form.validate();
+        if (form.isValid() == false) return;
+        var data = form.getData();
+        $.ajax({
+            url: "/Company/EmployeeSave",
+            type: "post",
+            data: data,
+            success: function (text) {
+                if (text.return) {
+                    mini.alert("保存成功！");
+                    cancel();
+                } else { mini.alert(text.toString()); }
+            }
+        });
+    }
+    //取消
+    function cancel() {
+        grid.reload();
+        setFormStatus(false);
+        setButtonStates("C");
+        form.clear();
+        form.reset();
+    }
+    
+    function loading() {
+            mini.mask({
+                el: document.body,
+                cls: 'mini-mask-loading',
+                html: '加载中...'
+            });
+            setTimeout(function () {
+                mini.unmask(document.body);
+            }, 1000);
+    }
+    function onIDCardsValidation(e) {
+        if (e.isValid) {
+            var pattern = /\d*/;
+            if (e.value.length < 15 || e.value.length > 18 || pattern.test(e.value) == false) {
+                e.errorText = "必须输入15~18位数字";
+                e.isValid = false;
+            }
+        }
+    }
+</script>

@@ -1,0 +1,81 @@
+﻿@{
+    Layout = Layout = "~/Views/Shared/_Layout.cshtml"; ;
+}
+<div style="width:90%;">
+    <input name="enableFlag" id="enableFlag" class="mini-hidden" value="N" />
+    <div style="width:100%;">
+        <div class="mini-toolbar" style="border-bottom:0;padding:0px;">
+            <table style="width:100%;">
+                <tr>
+                    <td></td>                   
+                    <td style="white-space:nowrap;">
+                        日期范围：<input id="beginDate" class="mini-datepicker" style="width:120px;" valueType="string" />
+                        ~<input id="endDate" class="mini-datepicker" style="width:120px;" valueType="string" />
+                        <span class="separator"></span>
+                        所属公司：<input id="companyId" class="mini-combobox" style="width:150px;" textField="OrganizationName" valueField="OrganizationId" emptyText="请选择..."
+                                    url="/Common/GetCompanys" value="" showNullItem="true" nullItemText="请选择..." />
+                        <span class="separator"></span>
+                        员工编号：<input id="empId" class="mini-textbox" style="width:150px;"/>
+                        <span class="separator"></span>
+                        员工姓名：<input id="empName" class="mini-textbox" style="width:150px;" emptyText="请输入文本"/>
+                        <a class="mini-button" onclick="search()">查询</a>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    <div id="datagrid1" class="mini-datagrid" style="width:100%;height:400px;"
+         url="/Attendance/GetEmpAttendances" idField="at_date" sallowResize="true" pageSize="10" allowCellSelect="true">
+        <div property="columns">
+            <div type="indexcolumn" width="20px">No.</div>
+            <div field="at_date" width="80px" headerAlign="center" allowSort="true" dateFormat="yyyy-MM-dd" align="center">日期</div>
+            <div field="at_emp_id" width="80px" headerAlign="center" allowSort="true" align="center">员工编号</div>
+            <div field="at_emp_name" width="80px" headerAlign="center" allowSort="true" >员工姓名</div>
+            <div field="at_company_name" width="80px" headerAlign="center" allowSort="true" >所属公司</div>
+            <div field="at_login_time" width="80px" headerAlign="center" allowSort="true" align="center">上班打卡</div>
+            <div field="at_level_time" width="80px" headerAlign="center" allowSort="true" align="center">下班打卡</div>
+            <div field="at_work_hours" width="80px" headerAlign="center" allowSort="true" align="center">工作时长</div>
+            <div field="at_work_flag" width="80px" headerAlign="center" allowSort="true" align="center">出勤</div>
+            <div field="at_no_att_reason" width="80px" headerAlign="center" allowSort="true" align="center">缺勤原因</div>
+            <div field="at_remarks" width="280px" headerAlign="center" allowSort="true">备注</div>       
+        </div>
+    </div>
+    <div class="description">
+        <h3 style=" color:#CC0000;font-size:16px;border-bottom:solid 1px #888;">考勤规则说明：</h3>
+        <ul style="padding-left:20px;">
+            <li>1. 工作时长不足5小时按缺勤处理</li>
+            <li>2. 缺勤，事假和婚嫁扣全部工资</li>
+            <li>3. 病假扣1/2公司</li>
+            <li>4. 产假扣3/4工资</li>
+            <li>5. 年假不扣工资</li>
+            <li>6. 按照国家法律规定，周末加班双倍工资；节假日加班3倍工资</li>
+            <li>7. 公司保留调休权力，员工应按照公司调休计划出勤和休息</li>
+        </ul>
+    </div>
+</div>           
+<script>
+    mini.parse();
+    var grid = mini.get("datagrid1");
+    //设定默认选中月份
+    var txtBeginDate = mini.get("beginDate");
+    var txtEndDate = mini.get("endDate");
+    var myDate = new Date();  
+    txtEndDate.setValue(myDate);
+    myDate.setDate(1);
+    txtBeginDate.setValue(myDate);
+    var condtion = { beginDate: txtBeginDate.getValue(), endDate: txtEndDate.getValue() };
+    //加载画面
+    grid.load(condtion);
+      
+    //查询
+    function search() {
+        var dateFrom = txtBeginDate.getValue();
+        var dateTo = txtEndDate.getValue();
+        var companyId = mini.get("companyId").getValue();
+        var empId = mini.get("empId").getValue();
+        var empName = mini.get("empName").getValue();
+        var condtion = { beginDate: dateFrom, endDate: dateTo, companyId: companyId, empId: empId, empName: empName };
+        grid.load(condtion);
+    }
+       
+</script>

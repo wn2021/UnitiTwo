@@ -1,0 +1,8 @@
+D:\Learn\miniUI.NET\UnitiTwo\Model\bin\Debug\Model.dll
+D:\Learn\miniUI.NET\UnitiTwo\Model\bin\Debug\Model.pdb
+D:\Learn\miniUI.NET\UnitiTwo\Model\obj\Debug\Model.dll
+D:\Learn\miniUI.NET\UnitiTwo\Model\obj\Debug\Model.pdb
+D:\Learn\miniUI.NET\UnitiTwo\Model\bin\Debug\BFC.FRM.Global.dll
+D:\Learn\miniUI.NET\UnitiTwo\Model\bin\Debug\BFC.SDK.dll
+D:\Learn\miniUI.NET\UnitiTwo\Model\bin\Debug\BFC.FRM.Global.xml
+D:\Learn\miniUI.NET\UnitiTwo\Model\bin\Debug\BFC.SDK.xml

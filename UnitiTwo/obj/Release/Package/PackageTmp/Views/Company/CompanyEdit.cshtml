@@ -1,0 +1,76 @@
+﻿@{
+    ViewBag.Title = "CompanyEdit";
+    //Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<form id="form1" method="post">
+
+
+    <div class="mini-fit'">
+        <input name="Id" id="Id" class="mini-hidden" value="@Model.id" />
+        <table border="0" cellpadding="2" cellspacing="0" class="EditTable" style="width: 100%">
+            <tr>
+                <td class="tdLabel" style="width: 30%;"> 公司名称：</td>
+                <td class="tdText" style="width: 70%;"><input class="mini-textbox" id="CompanyName" name="CompanyName" style="width: 200px;" value="@Model.CompanyName"></td>
+            </tr>
+            <tr>
+                <td class="tdLabel" style="width: 30%;">  地址： </td>
+                <td class="tdText" style="width: 70%;"> <input class="mini-textbox" id="Address" name="Address" style="width: 200px;" value="@Model.Address">  </td>
+            </tr>
+            <tr>
+                <td class="tdLabel" style="width: 30%;">  电话： </td>
+                <td class="tdText" style="width: 70%;"> <input class="mini-textbox" id="mobile" name="mobile" style="width: 200px;" value="@Model.mobile">  </td>
+            </tr>
+
+        </table>
+
+        <div style="text-align:center;padding:10px;">
+            <a class="mini-button" onclick="onOk" style="width:60px;margin-right:20px;">确定</a>
+            <a class="mini-button" onclick="onCancel" style="width:60px;">取消</a>
+        </div>
+    </div>
+</form>
+
+
+<script type="text/javascript">
+
+    mini.parse();
+    var form = new mini.Form("form1");
+    function SaveData() {
+
+        var form = new mini.Form("#form1");
+        var data = form.getData();      //获取表单多个控件的数据
+        //var json = mini.encode(data);   //序列化成JSON
+        $.ajax({
+            url: "/Home/CompanySave",
+            type: "post",
+            data: data,
+            success: function (text) {
+                //alert("提交成功，返回结果:" + text);
+                //grid.reload();
+
+                CloseWindow("提交成功");
+            }
+        });
+    }
+
+    function GetData() {
+        var o = form.getData();
+        return o;
+    }
+    function CloseWindow(action) {
+        if (action == "close" && form.isChanged()) {
+            if (confirm("数据被修改了，是否先保存？")) {
+                return false;
+            }
+        }
+        if (window.CloseOwnerWindow) return window.CloseOwnerWindow(action);
+        else window.close();
+    }
+    function onOk(e) {
+        SaveData();
+    }
+    function onCancel(e) {
+        CloseWindow("cancel");
+    }
+</script>

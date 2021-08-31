@@ -1,0 +1,43 @@
+﻿@{
+    Layout = Layout = "~/Views/Shared/_Layout.cshtml"; ;
+}
+<div id="notice_grid" class="mini-datagrid" style="width:100%; height:240px" url="@Url.Content("~/Content/data/2.txt")">
+    <div property="columns">
+        <div field="Public_Date" width="80px" renderer="onDateRender" headeralign="center" dateFormat="yyyy-MM-dd">
+            日期
+        </div>
+        <div field="Title" width="auto" headeralign="center">
+            标题
+        </div>
+        <div width="50px" renderer="onNoticeLinkRender">
+        </div>
+    </div>
+</div>
+<script language="javascript" type="text/javascript">
+    var onNoticeLinkRender = function (e) {
+                var click = "";
+                if (e.record.Content_Type == 1) {
+                     click = "mini.open({url:'@Url.Action("NoticeView", "Notice")/" + e.record.Id + "',title:'" + e.record.Title + "', width:800,height:600,onload:notice_load})";
+                     if(e.record.Impotant_Level ==1 && e.record.ReadId ==0 ){
+                         setTimeout(function(){
+
+                         mini.open({url:'@Url.Action("NoticeView", "Notice")/'+ e.record.Id ,title: e.record.Title , width:800,height:600, onload:notice_load})
+                         }, 500);
+                     }
+                }
+                else {
+                  click = "mini.open({url:'"+ e.record.Url+"',title:'" + e.record.Title + "', width:800,height:600,onload:notice_load})";
+                }
+                return  '<a href="javascript:void(0)" onclick="' + click + '">查看</a>';
+            };
+    $(document).ready(function () {
+        mini.parse();
+          window.notice_load = function (a, b, c) {
+                var iframe = this.getIFrameEl();
+                iframe.contentWindow.OpenContext = { parent: window, popwin: this };
+            };
+
+        var ng = mini.get("notice_grid");
+        ng.load();
+    });
+</script>

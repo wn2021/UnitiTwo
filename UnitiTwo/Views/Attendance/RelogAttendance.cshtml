@@ -1,0 +1,292 @@
+﻿@{
+    Layout = Layout = "~/Views/Shared/_Layout.cshtml"; ;
+}
+<style type="text/css">
+    .asLabel .mini-textbox-border,
+    .asLabel .mini-textbox-input,
+    .asLabel .mini-buttonedit-border,
+    .asLabel .mini-buttonedit-input,
+    .asLabel .mini-textboxlist-border {
+        border: 0;
+        background: none;
+        cursor: default;
+    }
+
+    .asLabel .mini-buttonedit-button,
+    .asLabel .mini-textboxlist-close {
+        display: none;
+    }
+
+    .asLabel .mini-textboxlist-item {
+        padding-right: 8px;
+    }
+</style>
+<div style="width:95%;">
+    <div class="mini-toolbar" style="border-bottom:0;padding:0px;">
+        <table style="width:100%;">
+            <tr>
+                <td>
+                    <a id="btnAdd" class="mini-button" iconCls="icon-add" onclick="add()">添加</a>
+                    <a id="btnRemove" class="mini-button" iconCls="icon-remove" onclick="remove()">删除</a>
+                    <a id="btnSave" class="mini-button" iconCls="icon-save" onclick="save()">保存</a>
+                    <a id="btnCancel" class="mini-button" iconCls="icon-cancel" onclick="cancel()">取消</a>
+                </td>
+                <td  align="right">
+                    考勤月份：<input id="strYmonth" class="mini-combobox" style="width:80px;" textField="sysvalue" valueField="sysvalue"
+                                url="/Common/GetMonths" value="" />
+                    所属公司：<input id="companyId" class="mini-combobox" style="width:120px;" textField="OrganizationName" valueField="OrganizationId" emptyText="请选择..."
+                                url="/Common/GetCompanys" value="" showNullItem="true" nullItemText="请选择..." onvaluechanged="onCompanyChanged" />
+                    <span class="separator"></span>
+                    所属部门：<input id="departmentId" class="mini-combobox" style="width:120px;" textField="OrganizationName" valueField="OrganizationId" emptyText="请选择..."
+                                value="" showNullItem="true" nullItemText="请选择..." />
+                    <span class="separator"></span>
+                    员工：<input id="employeeId" name="employeeId" class="mini-buttonedit" onbuttonclick="onButtonEdit" textName=""
+                              onvaluechanged="onEmployeeIdChanged" style="width:120px;"/>
+                    <input id="employeeName" name="employeeName" class="mini-textbox asLabel" readOnly="true" style="width:100px;" />
+                    <input name="cardNumber" id="cardNumber" class="mini-hidden"  />
+                    <a id="btnSearch" class="mini-button" onclick="search()">查询</a>
+                </td>
+            </tr>
+        </table>
+    </div>
+</div>
+
+<div id="datagrid1" class="mini-datagrid" style="width:95%;height:480px;"  
+     url="/Attendance/GetCardClickLog" idField="card_id" sallowResize="true" pageSize="20" allowCellEdit="true" allowCellSelect="true"
+     multiSelect="true" editNextOnEnterKey="true" editNextRowCell="true"navEditMode="true" oncellbeginedit="OnCellBeginEdit">
+    <div property="columns">
+        <div type="checkcolumn"></div>
+        <div field="employee_id" width="100px" headerAlign="center" allowSort="true" align="center">员工编号</div>
+        <div field="card_id" width="100px" headerAlign="center" allowSort="true" align="center">卡号</div>
+        <div field="work_date" width="100px" headerAlign="center" allowSort="true" dateFormat="yyyy-MM-dd" align="center">
+            日期
+            <input property="editor" class="mini-datepicker" style="width:100%;" />
+        </div>
+        <div field="begin_click_time" width="100px" headerAlign="center" allowSort="true" dateFormat="HH:mm">
+            <input property="editor" class="mini-timespinner" format="H:mm" />
+            上班打卡
+        </div>
+        <div field="end_click_time" width="100px" headerAlign="center" allowSort="true" dateFormat="HH:mm">
+            <input property="editor" class="mini-timespinner" format="HH:mm" />
+            下班打卡
+        </div>
+        <div field="new_flag" width="100px" headerAlign="center" allowSort="true" align="center">新增标志</div>
+    </div>
+</div>
+@*</br>
+<div style="width:100%;">
+    <div class="mini-toolbar" style="padding:0px;">
+        <table style="width:100%;">
+            <tr>
+                <td>
+                    <a id="btnAdd" class="mini-button" iconCls="icon-add" onclick="add()">添加</a>
+                    <a id="btnRemove" class="mini-button" iconCls="icon-remove" onclick="remove()">删除</a>
+                    <a id="btnSave" class="mini-button" iconCls="icon-save" onclick="save()">保存</a>
+                    <a id="btnCancel" class="mini-button" iconCls="icon-cancel" onclick="cancel()">取消</a>
+                </td>
+            </tr>
+        </table>
+    </div>
+</div>*@
+<script>
+
+    mini.parse();
+    var grid = mini.get("datagrid1");
+
+    //设定默认选中月份
+    var yMonth = mini.get("strYmonth");
+    var myDate = new Date();
+    var intY = myDate.getFullYear();
+    var intM = myDate.getMonth() + 1;
+    var strYmonth = intY + "-" + intM;
+    if (intM < 10) { strYmonth = intY + "-0" + intM; }
+    yMonth.setValue(strYmonth);
+
+    function OnCellBeginEdit(e) {
+        var record = e.record, field = e.field;
+        //alert(record.new_flag);
+        if (record.new_flag =="") {
+                e.cancel = true;    //已有数据不能修改
+        }
+    }
+    //按钮
+    var btnSearch = mini.get("btnSearch");
+    var btnA = mini.get("btnAdd");
+    var btnR = mini.get("btnRemove");
+    var btnS = mini.get("btnSave");
+    var btnC = mini.get("btnCancel");
+    //设置按钮状态
+    setButtonState("");
+    function setButtonState(editFlag) {
+        if (editFlag == "") {
+            btnSearch.enable();
+            btnA.disable();
+            btnR.disable();
+            btnS.disable();
+            btnC.disable();
+        } else if (editFlag == "1") {
+            //员工号输入后
+            btnSearch.enable();
+            btnA.disable();
+            btnR.disable();
+            btnS.disable();
+            btnC.disable();
+        } else if (editFlag == "2") {
+            //查询后
+            btnSearch.enable();
+            btnA.enable();
+            btnR.enable();
+            btnS.enable();
+            btnC.enable();
+        }
+    }
+    //选择员工按钮
+    function onButtonEdit(e) {
+        var btnEdit = this;
+        var lblName = mini.get("employeeName");
+        var cardNumber = mini.get("cardNumber");
+        var companyId = mini.get("companyId").value;
+        if (companyId == "") {
+            mini.alert("请先选择所属公司！");
+            return;
+        }
+        var departmentId = mini.get("departmentId").value;
+        mini.open({
+            url: "/Common/SelectEmployee?companyId=" + companyId + "&departmentId=" + departmentId,
+            title: "选择列表",
+            width: '80%',
+            height: '80%',
+            showMaxButton: true,
+            onload: function () {
+                var iframe = this.getIFrameEl();
+
+            },
+            ondestroy: function (action) {
+                if (action == "ok") {
+                    var iframe = this.getIFrameEl();
+                    var data = iframe.contentWindow.GetData();
+                    data = mini.clone(data);    //必须
+                    if (data) {
+                        btnEdit.setValue(data.employeeId);
+                        btnEdit.setText(data.employeeId);
+                        lblName.setValue(data.employeeName);
+                        lblName.setText(data.employeeName);
+                        cardNumber.setValue(data.ue_card_number);
+                        setButtonState("1");
+                    }
+                }
+
+            }
+        });
+
+    }
+    //查询
+    function search() {
+        var strYmonth = mini.get("strYmonth").value;
+        var companyId = mini.get("companyId").value;
+        if (companyId == "") {
+            mini.alert("请先选择所属公司！");
+            return;
+        }
+        var empId = mini.get("employeeId").text;
+        if (empId == "") {
+            mini.alert("请先输入员工编号");
+            return;
+        }
+
+        grid.load({ strMonth: strYmonth, companyId: companyId, employeeId: empId });
+        setButtonState("2");        
+    }
+    $("#key").bind("keydown", function (e) {
+        if (e.keyCode == 13) {
+            search();
+        }
+    });
+    //员工编号改变
+    function onEmployeeIdChanged() {
+
+        setButtonState("1");
+    }
+    //----查询部分下拉框联动
+    var companyCmb = mini.get("companyId");
+    
+    var deprtCmb = mini.get("departmentId");
+    //公司选择下拉框改变
+    function onCompanyChanged(e) {
+        var cmpId = companyCmb.getValue();
+        deprtCmb.setValue("");
+        var url = "/Common/GetDepartments?companyid=" + cmpId;
+        deprtCmb.setUrl(url);
+        deprtCmb.select(0);
+    }
+    //删除
+    function remove() {
+        var rows = grid.getSelecteds();
+        if (rows.length > 0) {
+            mini.confirm("确定删除选中记录？", "确认删除", function (action) {
+                if (action == "ok") {
+                    var json = mini.encode(rows);
+                    $.ajax({
+                        url: "/Attendance/DelCardClick",
+                        data: { data: json },
+                        type: "post",
+                        success: function (result) {
+                            if (result.success) {
+                                mini.alert("删除成功！");
+                                grid.reload();
+                            } else { mini.alert(result.message); }
+                        },
+                        error: function (jqXHR, textStatus, errorThrown) {
+                            if (options.callback(false) !== false) {
+                                alert("HTTP Error\n\n" + jqXHR.responseText);
+                            }
+                        },
+                        complete: function () {
+                            grid.unmask();
+                        }
+                    });
+                }
+            });
+        }
+    }
+    //新建
+    function add() {
+        var empId = mini.get("employeeId").value;
+        var cardNumber = mini.get("cardNumber").value;
+        var newRow = { employee_id: empId, card_id: cardNumber, new_flag: "New" };
+        grid.addRow(newRow, 0);
+        grid.deselectAll();
+        grid.select(newRow);
+    }
+    //保存
+    function save() {
+        saveGrid(grid, {
+            url: "/Attendance/SaveCardClick",
+            callback: function (success, result) {
+                if (success == true) {
+                    mini.alert("保存成功！");
+                    search();
+                } else {
+                    mini.alert(result.message);
+                }
+                return true;
+            }
+        });
+    }
+    //取消
+    function cancel() {
+        grid.reload();
+    }
+
+    function loading() {
+        mini.mask({
+            el: document.body,
+            cls: 'mini-mask-loading',
+            html: '加载中...'
+        });
+        setTimeout(function () {
+            mini.unmask(document.body);
+        }, 1000);
+    }
+
+</script>

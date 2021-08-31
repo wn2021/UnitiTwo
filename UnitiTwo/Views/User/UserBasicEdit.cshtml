@@ -1,0 +1,94 @@
+﻿@{
+    ViewBag.Title = "CompanyEdit";
+    //Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<form id="form1" method="post">
+
+    
+        <div class="mini-fit'">
+            <input name="UU_ID" id="UU_ID" class="mini-hidden" value="@Model.UU_ID" />
+            <input name="UU_PASSWORD" id="UU_PASSWORD" class="mini-hidden" value="@Model.UU_PASSWORD" />
+            <input name="UU_STATUS" id="UU_STATUS" class="mini-hidden" value="@Model.UU_STATUS" />
+            <fieldset style="width:700px;border:solid 1px #aaa;position:relative;">
+                <legend>用户基本信息</legend>
+                <table border="0" cellpadding="2" cellspacing="0" class="EditTable" style="width: 100%">
+                    <tr>
+                        <td class="tdLabel" style="width: 30%;"> 用户名称：</td>
+                        <td class="tdText" style="width: 70%;"><input class="mini-textbox" id="UU_NAME" name="UU_NAME" style="width: 200px;" value="@Model.UU_NAME"></td>
+                    </tr>
+                    <tr>
+                        <td class="tdLabel" style="width: 30%;"> 用户邮箱：</td>
+                        <td class="tdText" style="width: 70%;"><input class="mini-textbox" vtype="email" id="UU_EMAIL" name="UU_EMAIL" style="width: 200px;" value="@Model.UU_EMAIL"></td>
+                    </tr>
+                    <tr>
+                        <td class="tdLabel" style="width: 30%;"> 用户电话：</td>
+                        <td class="tdText" style="width: 70%;"><input class="mini-textbox" vtype="phone" id="UU_PHONE" name="UU_PHONE" style="width: 200px;" value="@Model.UU_PHONE"></td>
+                    </tr>
+                    <tr>
+                        <td class="tdLabel" style="width: 30%;">  地址： </td>
+                        <td class="tdText" style="width: 70%;"> <input class="mini-textbox" id="UU_ADDRESS" name="UU_ADDRESS" style="width: 200px;" value="@Model.UU_ADDRESS">  </td>
+                    </tr>
+                    <tr>
+                        <td class="tdLabel" style="width: 30%;">  用户权限组： </td>
+                        <td class="tdText" style="width: 70%;">
+                            @*<input class="mini-combobox" id="mobile" name="mobile" style="width: 200px;" value="@Model.mobile">*@
+                            <input id="UU_TYPE" class="mini-combobox" name="UU_TYPE" style="width:200px;" textField="mu_description" valueField="mu_id" emptyText="请选择..."
+                                   url="/User/GetGroup" value="@Model.UU_TYPE" required="true" allowInput="true" showNullItem="true" nullItemText="请选择..." />
+                        </td>
+                    </tr>
+
+                </table>
+            </fieldset>
+    <div style="text-align:center;padding:10px;">
+        <a class="mini-button" onclick="onOk" style="width:60px;margin-right:20px;">确定</a>
+        <a class="mini-button" onclick="onCancel" style="width:60px;">取消</a>
+    </div>
+    </div>
+</form>
+
+
+<script type="text/javascript">
+
+    mini.parse();
+    var form = new mini.Form("form1");
+    function SaveData() {
+
+        var form = new mini.Form("#form1");
+        form.validate();
+        if (form.isValid() == false) return;
+        var data = form.getData();      //获取表单多个控件的数据
+        //var json = mini.encode(data);   //序列化成JSON
+        $.ajax({
+            url: "/User/UserSave",
+            type: "post",
+            data: data,
+            success: function (text) {
+                //alert("提交成功，返回结果:" + text);
+                //grid.reload();
+
+                CloseWindow("提交成功");
+            }
+        });
+    }
+
+    function GetData() {
+        var o = form.getData();
+        return o;
+    }
+    function CloseWindow(action) {
+        if (action == "close" && form.isChanged()) {
+            if (confirm("数据被修改了，是否先保存？")) {
+                return false;
+            }
+        }
+        if (window.CloseOwnerWindow) return window.CloseOwnerWindow(action);
+        else window.close();
+    }
+    function onOk(e) {
+        SaveData();
+    }
+    function onCancel(e) {
+        CloseWindow("cancel");
+    }
+</script>

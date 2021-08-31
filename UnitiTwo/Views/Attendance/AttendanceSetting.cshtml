@@ -1,0 +1,195 @@
+﻿@{
+    Layout = Layout = "~/Views/Shared/_Layout.cshtml"; ;
+}
+<div style="width:60%;">
+    <input name="enableFlag" id="enableFlag" class="mini-hidden" value="N" />
+    <div style="width:100%;">
+        <div class="mini-toolbar" style="border-bottom:0;padding:0px;">
+            <table style="width:100%;">
+                <tr>
+                    <td style="width:100%;">
+                        <a id="btnEdit" class="mini-button" iconCls="icon-edit" onclick="edit()">编辑</a>
+                        <a id="btnCancel" class="mini-button" iconCls="icon-cancel" onclick="cancel()">取消</a>
+                        <a id="btnSave" class="mini-button" iconCls="icon-save" onclick="save()">保存</a>
+                    </td>
+                    <td style="white-space:nowrap;">
+                        年份：<input id="strYear" class="mini-textbox" style="width:50px;" onvaluechanged="onYearChanged" />
+                        <span class="separator"></span>
+                        月份：<input id="strYmonth" class="mini-combobox" style="width:150px;" textField="sysvalue" valueField="sysvalue"
+                                    url="/Common/GetMonths" value="" />
+                        <a id="btnInit" class="mini-button" onclick="init()">初始化</a>
+                        <a class="mini-button" onclick="search()">查询</a>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    <div id="datagrid1" class="mini-datagrid" style="width:100%;height:500px;"
+         url="/Attendance/GetAttSetting" idField="as_date" sallowResize="true" pageSize="10" allowCellEdit="true" allowCellSelect="true"
+         multiSelect="true" editNextOnEnterKey="true" editNextRowCell="true">
+        <div property="columns">
+            <div type="indexcolumn" width="20px">No.</div>
+            <div field="as_date" width="80px" headerAlign="center" allowSort="true" dateFormat="yyyy-MM-dd" align="center">日期</div>
+            <div field="as_day_of_week" width="80px" headerAlign="center" allowSort="true" align="center">星期</div>
+            <div field="as_day_type" displayField="as_day_type_name" width="80" headerAlign="center">
+                日期类型
+                <input property="editor" class="mini-combobox" style="width:100%;"  url="/Common/GetSystemInfoList?sysid=2002" 
+                       textField="description" valueField="sysvalue"/>
+            </div> 
+            <div field="as_salary_param" width="50px" headerAlign="center" allowSort="true" align="right" decimalPlaces="2" dataType="float" required="true">
+                工资参数
+                <input property="editor" class="mini-spinner" minValue="0.00" maxValue="10.00" value="" style="width:100%;" />
+            </div>           
+        </div>
+    </div>
+</div>           
+<script>
+    mini.parse();
+    var grid = mini.get("datagrid1");
+    var year = mini.get("strYear");
+    //设定默认选中月份
+    var yMonth = mini.get("strYmonth");
+    var myDate = new Date();
+    var intY = myDate.getFullYear();
+    var intM = myDate.getMonth() + 1;
+    var strYmonth = intY + "-" + intM;
+    if (intM < 10) { strYmonth = intY + "-0" + intM; }
+    yMonth.setValue(strYmonth);
+    year.setValue(intY);
+    //加载画面
+    grid.load({ strYmonth: strYmonth });
+    //设置画面初始状态
+    setButtonStates("C");
+    //如果已经初始化不可再初始化
+    grid.on("load",function(e){ 
+        var num = grid.getData().length;
+        if (num > 0) {
+            var btnInit = mini.get("btnInit");
+            btnInit.disable();
+        }
+    
+    }) 
+    grid.on("cellbeginedit", function (e) {
+        var enableFlag = mini.get("enableFlag");
+        if (enableFlag && enableFlag.value == 'N') {
+            e.cancel = true;
+        }
+    });
+    
+    grid.on("cellcommitedit", function (e) {
+        var record = e.record;        
+        if (e.editor.getText) {
+            record.text = e.editor.getText();
+        } else {
+            record.text = e.value;
+        }
+    });
+
+    grid.on("beforeload", function (e) {
+        if (grid.getChanges().length > 0) {
+            if (confirm("有增删改的数据未保存，是否取消本次操作？")) {
+                e.cancel = true;
+            }
+        }
+    });
+    //grid.on("drawcell",function(e){
+    //    var enableFlag = mini.get("enableFlag");
+       
+    //    if (e.field == 'as_salary_param') {
+    //        alert("drawcell");
+    //        if (enableFlag && enableFlag.value == 'N') {
+    //            e.cellStyle= 'color:black;'; 
+    //        }else{e.cellStyle= 'color:red;';}
+    //    }        
+    //});
+    //年份值改变
+    function onYearChanged() {
+        var intYear = year.getValue();
+        yMonth.setValue("");
+        var url = "/Common/GetMonths?intYear=" + intYear;
+        yMonth.setUrl(url);
+        yMonth.select(0);
+        cancel();
+       
+    }
+    function init() {
+        var strYmonth = yMonth.getValue();
+        if (!strYmonth || strYmonth == "") {
+            mini.alert("请选择考勤月份！");
+            return;
+        }
+        grid.loading("操作中，请稍后......");
+        $.ajax({
+            url: "/Attendance/initSetting?strYmonth=" + strYmonth,
+            type: "post",
+            success: function (text) {
+                search();
+            }
+        });
+    }
+    //查询职级薪资
+    function search() {
+        var strYmonth = yMonth.getValue();
+        grid.load({ strYmonth: strYmonth }, function (e) {
+            var num = grid.getData().length;
+            var btnInit = mini.get("btnInit");
+            if (num > 0) {
+               
+                btnInit.disable();
+            } else { btnInit.enable();}
+        });
+        setButtonStates("C");
+    }
+    
+    //编辑
+    function edit() {      
+        setButtonStates("E");
+    }
+    //取消
+    function cancel() {       
+        grid.reload();
+        setButtonStates("C");
+    }
+    //保存
+    function save() {
+        saveGrid(grid, {
+            url: "/Attendance/SaveSettings",
+            callback: function (success, result) {
+                if (success == true) {
+                    //mini.alert("保存成功！");
+                    search();
+                } else {
+                    mini.alert(result.message);
+                }
+                return true;
+            }
+        });
+    }
+    //设置按钮状态
+    function setButtonStates(operateType) {
+        var btnE = mini.get("btnEdit");
+        var btnS = mini.get("btnSave");
+        var btnC = mini.get("btnCancel");
+        var btnInit = mini.get("btnInit");
+        if (operateType == "E") {
+            var enableFlag = mini.get("enableFlag");
+            enableFlag.setValue("Y");
+            btnE.disable();
+            btnS.enable();
+            btnC.enable();
+        } else {
+            var enableFlag = mini.get("enableFlag");
+            enableFlag.setValue("N");
+            btnE.enable();
+            btnS.disable();
+            btnC.disable();
+        }
+        var today = new Date();
+        var curYear = today.getFullYear();
+        if (year.getValue() < curYear) {
+            btnE.disable();
+            btnInit.disable();
+        }
+    }
+    
+</script>

@@ -1,0 +1,797 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>BFC.FRM.Dao</name>
+    </assembly>
+    <members>
+        <member name="M:BFC.FRM.Dao.FrameworkDaoConfig.ReadAppSetting(System.String)">
+            <summary>
+            读取定义在 BFC.FRM.dao\appSettings 中的设置属性值。
+            </summary>
+            <param name="key"></param>
+            <returns></returns>
+        </member>
+        <member name="P:BFC.FRM.Dao.FrameworkDaoConfig.EnabledDaoTransactionScope">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:BFC.FRM.Dao.FrameworkDaoConfig.GetConfigValue(System.String,System.String)">
+            <summary>
+            获取 BFC.FRM.dao 节点下的指定子节点下的指定属性值。
+            </summary>
+            <param name="nodeName"></param>
+            <param name="attributeName"></param>
+            <returns></returns>
+        </member>
+        <member name="T:BFC.FRM.Dao.DaoTransactionScope">
+            <summary>
+            DaoTransactionScope 类，提供DAO连接和事务管理。
+            请使用 using() 语句块处理。
+            如果所有工作都已全部成功处理完毕，请必须调用一次（并且仅仅调用一次） Complete() 方法。
+            </summary>
+        </member>
+        <member name="M:BFC.FRM.Dao.DaoTransactionScope.#ctor">
+            <summary>
+            创建 DaoTransactionScope 对象实例而不启用事务。
+            但如果当前代码所在外层 DaoTransactionScope 对象实例已经启用事务，
+            则自动会启用当前对象实例的事务。
+            </summary>
+        </member>
+        <member name="M:BFC.FRM.Dao.DaoTransactionScope.#ctor(System.Boolean)">
+            <summary>
+            创建 DaoTransactionScope 对象实例并且根据参数决定是否启用事务。
+            如果当前代码所在外层 DaoTransactionScope 对象实例已经启用事务，
+            则会忽略当前传递的参数而自动会启用当前对象实例的事务。
+            事务提交发生在第一个启用事务的 DaoTransactionScope 对象的 Complete 方法时。
+            事务回滚发生在第一个启用事务的 DaoTransactionScope 对象的 Dispose 方法。
+            </summary>
+        </member>
+        <member name="P:BFC.FRM.Dao.DaoTransactionScope.DaoTransactionScopeList">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:BFC.FRM.Dao.DaoTransactionScope.Current">
+            <summary>
+            获取当前的 DaoTransactionScope 对象。
+            </summary>
+        </member>
+        <member name="P:BFC.FRM.Dao.DaoTransactionScope.DataAccessInstance">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:BFC.FRM.Dao.DaoTransactionScope.DataAccessTemplateInstance">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:BFC.FRM.Dao.DaoTransactionScope.Disposed">
+            <summary>
+            是否已经调用 Dispose() 方法。
+            </summary>
+        </member>
+        <member name="P:BFC.FRM.Dao.DaoTransactionScope.IsTransacting">
+            <summary>
+            获取当前 DaoTransactionScope 对象是否处于事务环境中。
+            该属性会随着事务环境上下文改变。
+            </summary>
+        </member>
+        <member name="P:BFC.FRM.Dao.DaoTransactionScope.IsComplete">
+            <summary>
+            或取当前 DaoTransactionScope 对象是否已经执行了 Complete 方法。
+            </summary>
+        </member>
+        <member name="M:BFC.FRM.Dao.DaoTransactionScope.Complete">
+            <summary>
+            当前事务中所有工作已经处理完毕，通知 DaoTransactionScope 已经成功完成操作。
+            如果当前对象处于事务环境中，并且是第一个启用事务的 DaoTransactionScope 对象，则立即提交更改。
+            </summary>
+        </member>
+        <member name="F:BFC.FRM.Dao.DaoTransactionScope._isUnComplete">
+            <summary>
+            是否发生过未执行 Complete 方法过
+            </summary>
+        </member>
+        <member name="M:BFC.FRM.Dao.DaoTransactionScope.Dispose">
+            <summary>
+            释放当前对象所占有的资源。
+            </summary>
+        </member>
+        <member name="M:BFC.FRM.Dao.DaoTransactionScope.DisposeThreadData">
+            <summary>
+            将当前线程数据进行清理。
+            </summary>
+        </member>
+        <member name="T:BFC.FRM.Dao.InfraDaoBase">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:BFC.FRM.Dao.InfraDaoBase.#ctor(System.String)">
+            <summary>
+            使用指定的连接字符串实例化一个 InfraDaoBase 对象。
+            注意：如果启用了 DaoTransactionScope，则必须确保所有在 DaoTransactionScope 范围内的 Dao 对象对应的 DataAccessClient 对象都是该连接字符串。
+            </summary>
+            <param name="connectionString">不为空的有效的连接字符串。</param>
+        </member>
+        <member name="M:BFC.FRM.Dao.InfraDaoBase.#ctor">
+            <summary>
+            默认构造涵数。
+            内部建立DataAccessTemplate 对象。
+            </summary>
+        </member>
+        <member name="M:BFC.FRM.Dao.InfraDaoBase.#ctor(BFC.FRM.Dao.InfraDaoBase)">
+            <summary>
+            使用　DAO　对象作为参数构造新的实例。此时，两个 Dao 对象将共享连接。
+            </summary>
+            <param name="dao"></param>
+        </member>
+        <member name="P:BFC.FRM.Dao.InfraDaoBase.MultiConditionSeparators">
+            <summary>
+            SQL 语句多条件查询分隔符。
+            </summary>
+        </member>
+        <member name="M:BFC.FRM.Dao.InfraDaoBase.GetSqlValueString(System.Object)">
+            <summary>
+            
+            </summary>
+            <param name="value"></param>
+            <returns></returns>
+        </member>
+        <member name="M:BFC.FRM.Dao.InfraDaoBase.GetSqlValueString(System.Nullable{System.DateTime},System.String)">
+            <summary>
+            
+            </summary>
+            <param name="date"></param>
+            <param name="format"></param>
+            <returns></returns>
+        </member>
+        <member name="M:BFC.FRM.Dao.InfraDaoBase.GetLikeSqlValueString(System.Object)">
+            <summary>
+            
+            </summary>
+            <param name="value"></param>
+            <returns></returns>
+        </member>
+        <member name="M:BFC.FRM.Dao.InfraDaoBase.GetLikeSqlValueString(System.Object,System.Boolean,System.Boolean)">
+            <summary>
+            
+            </summary>
+            <param name="value"></param>
+            <param name="isLeftLike"></param>
+            <param name="isRightLike"></param>
+            <returns></returns>
+        </member>
+        <member name="M:BFC.FRM.Dao.InfraDaoBase.GetMultiSqlFuzzyQueryCondition(System.String,System.String)">
+            <summary>
+            <para>指定字段名和 string 类型的值集合组装多个 SQL 检索条件字符串返回。</para>
+            <para>该方法适用于名称之类始终固定为模糊查询之类的检索。</para>
+            <para>例如：fieldName 参数值为“ID,Name”,valueCollection 参数值为“0005,张三”，</para>
+            <para>则返回值为“((ID LIKE '%0005%' OR ID LIKE '%张三%') OR (Name LIKE '%0005%' OR Name LIKE '%张三%'))”</para>
+            </summary>
+            <param name="fieldNameCollection">
+            <para>组装检索条件的一个或多个字段名，可以包含表前缀或函数，例如：T.CASEID,UPPER(T.CASENAME)。</para>
+            <para>使用逗号分隔多个字段，这些字段之间的条件为 OR 的关系。如："ID,Name"</para>
+            </param>
+            <param name="valueCollection">
+            <para>检索条件的值集合，使用“,”或“，”或空格分隔的一系列值。</para>
+            <para>如果该值为 null 或 empty 则返回 "1=1"。</para>
+            <para>不需要带上模糊查询通配符，例如：ABC，方法会自动加上通配符变成 %ABC%；</para>
+            </param>
+            <returns>
+            <para>如果参数 valueCollection 值为 null 或 empty 则返回 "1=1"；</para>
+            <para>如果没有任何值，只有分隔符，则返回 "1=1"；</para>
+            <para>否则返回实际的检索条件。</para>
+            </returns>
+        </member>
+        <member name="M:BFC.FRM.Dao.InfraDaoBase.GetMultiSqlFuzzyQueryConditionImp(System.String,System.String)">
+            <summary>
+            指定字段名和 string 类型的值集合组装多个 SQL 检索条件字符串返回。
+            该方法适用于名称之类固定为模糊查询之类的检索。
+            </summary>
+            <param name="fieldName">组装检索条件的字段名，可以包含表前缀或函数，例如：T.CASEID,UPPER(T.CASENAME)</param>
+            <param name="valueCollection">
+            检索条件的值集合，使用“,”或“，”或空格分隔的一系列值。
+            如果该值为 null 或 empty 则返回 "1=1"。
+            不需要带上模糊查询通配符，例如：ABC，方法会自动加上通配符变成 %ABC%；
+            </param>
+            <returns>
+            如果参数 valueCollection 值为 null 或 empty 则返回 "1=1"；
+            如果没有任何值，只有分隔符，则返回 "1=1"；
+            否则返回实际的检索条件。
+            </returns>
+        </member>
+        <member name="M:BFC.FRM.Dao.InfraDaoBase.GetMultiSqlQueryCondition(System.String,System.String,System.Type)">
+            <summary>
+            <para>指定一个或多个字段名和 string 类型的值集合组装多个 SQL 检索条件字符串返回。</para>
+            <para>该方法适用于主键编号之类的检索。</para>
+            <para>对于字符串类型，是否采取模糊检索取决于外部提供的条件值中是否带有“%”。</para>
+            <para>例如：fieldName 参数值为“ID,Name”,valueCollection 参数值为“0005,张%”，</para>
+            <para>则返回值为“((ID = '0005' OR ID LIKE '张%') OR (Name = '0005' OR Name LIKE '张%'))”</para>
+            </summary>
+            <param name="fieldNameCollection">
+            <para>组装检索条件的一个或多个字段名，可以包含表前缀或函数，例如：T.CASEID,UPPER(T.CASENAME)。</para>
+            <para>使用逗号分隔多个字段，这些字段之间的条件为 OR 的关系。如："ID,Name"</para>
+            </param>
+            <param name="valueCollection">
+            <para>检索条件的值集合，使用“,”或“，”分隔的一系列值。</para>
+            <para>如果该值为 null 或 empty 则返回 "1=1"。</para>
+            <para>当 valueType 为 string、char以及Guid 类型时，valueCollection 可以直接带上模糊查询通配符以达到模糊查询目的，例如：%ABC,1234R。</para>
+            </param>
+            <param name="valueType">值类型。标识该字段值所属类型。</param>
+            <returns>
+            <para>如果参数 valueCollection 值为 null 或 empty 则返回 "1=1"；</para>
+            <para>如果没有任何值，只有分隔符，则返回 "1=1"；</para>
+            <para>否则返回实际的检索条件。</para>
+            </returns>
+        </member>
+        <member name="M:BFC.FRM.Dao.InfraDaoBase.GetMultiSqlQueryConditionImp(System.String,System.String,System.Type)">
+            <summary>
+            指定字段名和 string 类型的值集合组装多个 SQL 检索条件字符串返回。
+            该方法适用于主键编号之类的检索。
+            </summary>
+            <param name="fieldName">组装检索条件的一个或多个字段名，可以包含表前缀或函数，例如：T.CASEID,UPPER(T.CASENAME)</param>
+            <param name="valueCollection">
+            检索条件的值集合，使用“,”或“，”分隔的一系列值。
+            如果该值为 null 或 empty 则返回 "1=1"。
+            当 valueType 为 string、char以及Guid 类型时，valueCollection 可以直接带上模糊查询通配符以达到模糊查询目的，例如：%ABC,1234R。
+            </param>
+            <param name="valueType">值类型。标识该字段值所属类型。</param>
+            <returns>
+            如果参数 valueCollection 值为 null 或 empty 则返回 "1=1"；
+            如果没有任何值，只有分隔符，则返回 "1=1"；
+            否则返回实际的检索条件。
+            </returns>
+        </member>
+        <member name="M:BFC.FRM.Dao.InfraDaoBase.GetSqlFuzzyQueryCondition(System.String,System.String)">
+            <summary>
+            指定字段名和实际类型的值组装 SQL 模糊检索条件字符串返回。
+            该方法适用于名称之类固定为模糊查询之类的检索。
+            </summary>
+            <param name="fieldName">组装检索条件的字段名，可以包含表前缀或函数，例如：T.CASEID,UPPER(T.CASENAME)</param>
+            <param name="value">组装检索条件实际类型的值。只能是简单值类型数据。不能为数组。
+            不需要带上模糊查询通配符，例如：ABC，方法会自动加上通配符变成 %ABC%；
+            如果带上模糊查询通配符，例如：ABC% 则，方法不会自动加上通配符，保持 ABC% 。
+            </param>
+            <returns>
+            当 value 为 null 或零长度字符串时，返回 “(1=1)”；
+            否则返回实际条件字符串。
+            </returns>
+        </member>
+        <member name="M:BFC.FRM.Dao.InfraDaoBase.GetSqlQueryCondition(System.String,System.Object)">
+            <summary>
+            指定字段名和实际类型的值组装 SQL 检索条件字符串返回。
+            该方法适用于主键编号之类的检索。
+            </summary>
+            <param name="fieldName">组装检索条件的字段名，可以包含表前缀或函数，例如：T.CASEID,UPPER(T.CASENAME)</param>
+            <param name="value">组装检索条件实际类型的值。只能是简单值类型数据。不能为数组。
+            当该值为 string、char以及Guid 类型时，可以直接带上模糊查询通配符以达到模糊查询目的，例如：%ABC。
+            </param>
+            <returns>
+            当 value 为 null 或零长度字符串时，返回 “(1=1)”；
+            否则返回实际条件字符串。
+            </returns>
+        </member>
+        <member name="F:BFC.FRM.Dao.InfraDaoBase.isInternalDataAccess">
+            <summary>
+            是否内部实例化的 DataAccess 对象，而不是外部传递进来的 Dao 对象作为构造函数的参数。
+            </summary>
+        </member>
+        <member name="P:BFC.FRM.Dao.InfraDaoBase.DataAccessClient">
+            <summary>
+            获取访问数据库的 IDataAccess 对象。
+            </summary>
+        </member>
+        <member name="M:BFC.FRM.Dao.InfraDaoBase.CheckDaoTransactionScope">
+            <summary>
+            检查是否处于环境事务管理模式下。
+            </summary>
+        </member>
+        <member name="M:BFC.FRM.Dao.InfraDaoBase.BeginTrans">
+            <summary>
+            开始一个事务。
+            </summary>
+        </member>
+        <member name="M:BFC.FRM.Dao.InfraDaoBase.RollbackTrans">
+            <summary>
+            回滚当前的事务。
+            </summary>
+        </member>
+        <member name="M:BFC.FRM.Dao.InfraDaoBase.CommitTrans">
+            <summary>
+            提交当前事务。
+            </summary>
+        </member>
+        <member name="P:BFC.FRM.Dao.InfraDaoBase.IsTransaction">
+            <summary>
+            获取当前 Dao 对象是否正在事务中。
+            </summary>
+        </member>
+        <member name="P:BFC.FRM.Dao.InfraDaoBase.LoginUser">
+            <summary>
+            取得当前系统登录用户名。
+            </summary>
+        </member>
+        <member name="P:BFC.FRM.Dao.InfraDaoBase.DateFormatForDB">
+            <summary>
+            用于数据库SQL语句中的日期格式字符串。
+            </summary>
+        </member>
+        <member name="P:BFC.FRM.Dao.InfraDaoBase.DateTimeFormatForDB">
+            <summary>
+            用于数据库SQL语句中的日期时间格式字符串。
+            </summary>
+        </member>
+        <member name="P:BFC.FRM.Dao.InfraDaoBase.TimeFormatForDB">
+            <summary>
+            用于数据库SQL语句中的日期时间格式字符串。
+            </summary>
+        </member>
+        <member name="M:BFC.FRM.Dao.InfraDaoBase.FillDataTable(System.Data.DataTable,System.String,System.Object[])">
+            <summary>
+            检索指定的数据填充到指定的 DataTable 对象中。
+            适用于指定字段条件检索多条数据。
+            </summary>
+            <param name="table">要填充数据的 DataTable 对象中，如果存在列信息，则只填充已存在的列，否则，填充数据库中指定名称表的所有字段。</param>
+            <param name="tableName">检索数据的表名称。</param>
+            <param name="fieldsAndValues">指示检索数据的字段名称和值。例如：字段1，值1，字段2，值2 ...</param>
+        </member>
+        <member name="M:BFC.FRM.Dao.InfraDaoBase.FillDataTable(System.Data.DataTable,System.String,BFC.SDK.Data.SortOrder[],System.Object[])">
+            <summary>
+            检索指定的数据填充到指定的 DataTable 对象中。
+            适用于指定字段条件检索多条数据。
+            </summary>
+            <param name="table">要填充数据的 DataTable 对象中，如果存在列信息，则只填充已存在的列，否则，填充数据库中指定名称表的所有字段。</param>
+            <param name="tableName">检索数据的表名称。</param>
+            <param name="orderBy">排序。</param>
+            <param name="fieldsAndValues">指示检索数据的字段名称和值。例如：字段1，值1，字段2，值2 ...</param>
+        </member>
+        <member name="M:BFC.FRM.Dao.InfraDaoBase.LoadDataModelList``1(System.String,System.Object[])">
+            <summary>
+            检索指定的数据返回数据模型 IList 对象。
+            适用于指定字段条件检索多条数据。
+            </summary>
+            <param name="tableName">检索数据的表名称。</param>
+            <param name="fieldsAndValues">指示检索数据的字段名称和值。例如：字段1，值1，字段2，值2 ...</param>
+            <returns>
+            返回数据模型 IList 对象。
+            如果没有检索到结果则返回零长度的 IList 对象。
+            </returns>
+        </member>
+        <member name="M:BFC.FRM.Dao.InfraDaoBase.LoadDataModelList``1(System.String,BFC.SDK.Data.SortOrder[],System.Object[])">
+            <summary>
+            检索指定的数据返回数据模型 IList 对象。
+            适用于指定字段条件检索多条数据。
+            </summary>
+            <param name="tableName">检索数据的表名称。</param>
+            <param name="fieldsAndValues">指示检索数据的字段名称和值。例如：字段1，值1，字段2，值2 ...</param>
+            <param name="orderBy">排序。</param>
+            <returns>
+            返回数据模型 IList 对象。
+            如果没有检索到结果则返回零长度的 IList 对象。
+            </returns>
+        </member>
+        <member name="M:BFC.FRM.Dao.InfraDaoBase.LoadDataModel``1(System.String,System.Object[])">
+            <summary>
+            检索指定的数据返回数据模型对象。
+            适用于指定主键条件检索单条数据。
+            </summary>
+            <param name="tableName">检索数据的表名称。</param>
+            <param name="fieldsAndValues">指示检索数据的字段名称和值。例如：字段1，值1，字段2，值2 ...</param>
+            <returns>
+            返回数据模型对象。
+            如果检索的结果有多条记录，则返回第一条记录组装的数据对象。
+            如果没有检索到结果则返回 null 。
+            </returns>
+        </member>
+        <member name="M:BFC.FRM.Dao.InfraDaoBase.InsertData(System.Object,System.String,BFC.SDK.Data.DataAccess.UpdateFields)">
+            <summary>
+            通过指定需要插入到数据库中的字段或者不要插入到数据库的字段，将指定对象的数据插入到数据库中。
+            </summary>
+            <param name="dataModelObj"></param>
+            <param name="tableName"></param>
+            <param name="fields">指定需要插入到数据库中的字段或者不要插入到数据库的字段。</param>
+            <returns></returns>
+        </member>
+        <member name="M:BFC.FRM.Dao.InfraDaoBase.InsertData(System.Object,System.String)">
+            <summary>
+            将指定对象的数据插入到数据库中，所有字段均插入。
+            </summary>
+            <param name="dataModelObj"></param>
+            <param name="tableName"></param>
+            <returns></returns>
+        </member>
+        <member name="M:BFC.FRM.Dao.InfraDaoBase.UpdateData(System.Object,System.String,BFC.SDK.Data.DataAccess.UpdateFields,System.String[])">
+            <summary>
+            通过指定需要更新的字段或排除更新的字段，将指定的数据更新到数据库中。
+            </summary>
+            <param name="dataModelObj"></param>
+            <param name="tableName"></param>
+            <param name="fields">指定需要更新的字段或排除更新的字段。</param>
+            <param name="primaryKeyFields"></param>
+            <returns></returns>
+        </member>
+        <member name="M:BFC.FRM.Dao.InfraDaoBase.UpdateData(System.Object,System.String,System.String[])">
+            <summary>
+            将指定的数据更新到数据库中，所有字段均会更新。
+            </summary>
+            <param name="dataModelObj"></param>
+            <param name="tableName"></param>
+            <param name="primaryKeyFields"></param>
+            <returns></returns>
+        </member>
+        <member name="M:BFC.FRM.Dao.InfraDaoBase.DeleteData(System.Object,System.String,System.String[])">
+            <summary>
+            将指定的数据从数据库中删除。
+            </summary>
+            <param name="dataModelObj"></param>
+            <param name="tableName"></param>
+            <param name="primaryKeyFields"></param>
+            <returns></returns>
+        </member>
+        <member name="P:BFC.FRM.Dao.InfraDaoBase.Disposed">
+            <summary>
+            是否已经调用 Dispose() 方法。
+            </summary>
+        </member>
+        <member name="M:BFC.FRM.Dao.InfraDaoBase.Dispose">
+            <summary>
+            释放对象占有的资源，如果是内部建立的 DataAccessTemplate 对象，则自动关闭它并放入连接池。
+            </summary>
+        </member>
+        <member name="M:BFC.FRM.Dao.InfraDaoBase.Dispose(System.Boolean)">
+            <summary>
+            
+            </summary>
+            <param name="disposing"></param>
+        </member>
+        <member name="M:BFC.FRM.Dao.InfraDaoBase.CreateDataAccessClientInstance(System.String)">
+            <summary>
+            DataAccessClient 对象已经成功创建，派生类可以重写此方法进行一些初始化处理。
+            </summary>
+        </member>
+        <member name="M:BFC.FRM.Dao.InfraDaoBase.InitializeDataAccessClient">
+            <summary>
+            DataAccessClient 对象已经成功创建，派生类可以重写此方法进行一些初始化处理。
+            </summary>
+        </member>
+        <member name="M:BFC.FRM.Dao.InfraDaoBase.DataAccessClientClosing">
+            <summary>
+            DataAccessClient 对象正在关闭连接。
+            </summary>
+        </member>
+        <member name="P:BFC.FRM.Dao.InfraDaoBase.DataAccessFactoryConectionName">
+            <summary>
+            获取当前项目定义在配置文件中的 DataAccessFactory 中的连接配置名称，默认返回 null，
+            即表示使用默认未命名的连接配置名称。
+            如果需要使用指定名称的连接配置，请在派生类中重写本属性，返回指定的名称。
+            </summary>
+        </member>
+        <member name="P:BFC.FRM.Dao.InfraDaoBase.DecryptConnectionStringKey">
+            <summary>
+            指定用于解密连接字符串的 KEY,派生类重写本属性用于指定本项目需要使用的加密KEY。
+            </summary>
+        </member>
+        <member name="P:BFC.FRM.Dao.InfraDaoBase.DecryptConnectionStringIV">
+            <summary>
+            指定用于解密连接字符串的 KEY,派生类重写本属性用于指定本项目需要使用的加密IV。
+            </summary>
+        </member>
+        <member name="T:BFC.FRM.Dao.IDaoBase">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:BFC.FRM.Dao.IDaoBase.BeginTrans">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:BFC.FRM.Dao.IDaoBase.CommitTrans">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:BFC.FRM.Dao.IDaoBase.RollbackTrans">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:BFC.FRM.Dao.IDaoBase.IsTransaction">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:BFC.FRM.Dao.IDLSecurity.UserLogin(System.String,System.String,System.String,System.Object)">
+            <summary>
+            用户登录。
+            </summary>
+            <param name="loginUserID"></param>
+            <param name="password"></param>
+            <param name="terminalIP"></param>
+            <param name="state">用户登录所需传递到底层调用的附加数据。如果没有可以为 null 。</param>
+            <returns>登录成功返回 IUserLoginInfo 对象。否则返回 null。</returns>
+        </member>
+        <member name="M:BFC.FRM.Dao.IDLSecurity.UserLogout(System.String,System.Object)">
+            <summary>
+            用户注销登出。
+            </summary>
+            <param name="passport">注销用的登录凭证。</param>
+            <param name="state">用户注销所需传递到底层调用的附加数据。如果没有可以为 null 。</param>
+        </member>
+        <member name="M:BFC.FRM.Dao.IDLSecurity.CheckUserAuthorised(System.String[],BFC.FRM.Model.IUserLoginInfo)">
+            <summary>
+            检查用户是否拥有指定的一批特定权限。
+            返回拥有的权限数组。
+            </summary>
+            <param name="functionID">需要检查的一批权限数组</param>
+            <param name="loginInfo">登录用户信息对象。如果未登录，则传递 null 。</param>
+            <returns></returns>
+        </member>
+        <member name="M:BFC.FRM.Dao.IDLSecurity.GetUserMenuTreeViewData(System.String)">
+            <summary>
+            取得指定用户可访问的菜单及层次关系。
+            </summary>
+            <param name="userID">用户编号。</param>
+            <returns></returns>
+        </member>
+        <member name="M:BFC.FRM.Dao.IDLSecurity.GetAllMenuTreeViewData">
+            <summary>
+            取得所有的菜单及层次关系。
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:BFC.FRM.Dao.IDLSecurity.GetFunctionTreeViewData(System.Int32)">
+            <summary>
+            取得所有的功能及层次关系。并根据指定权限组在 IsAuthorized 字段上标记该权限组所拥有的权限。
+            </summary>
+            <param name="authorityGroupID">需要标记拥有权限的权限组编号。</param>
+            <returns></returns>
+        </member>
+        <member name="M:BFC.FRM.Dao.IDLSecurity.GetFunctionTreeViewData">
+            <summary>
+            取得所有的功能及层次关系。
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:BFC.FRM.Dao.IDLSecurity.GetUserName(System.String)">
+            <summary>
+            根据用户编号取得用户名称。
+            </summary>
+            <param name="userID"></param>
+            <returns></returns>
+        </member>
+        <member name="T:BFC.FRM.Dao.IDLSystemInfo">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="T:BFC.FRM.Dao.IDLSystemInfoExt">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:BFC.FRM.Dao.IDLSystemInfoExt.GetSystemInfoList(System.Int32,System.String)">
+            <summary>
+            使用指定的区域语言获取 FRM_SYSTEMINFO 的两个值和名称的列表数据。
+            </summary>
+            <param name="sysID"></param>
+            <param name="cultureName">要获取名称列对应的区域语言，传递空则默认获取当前语言。</param>
+            <returns>如果没有数据则返回长度为 0 的 List 对象。 </returns>
+        </member>
+        <member name="M:BFC.FRM.Dao.IDLSystemInfoExt.GetSystemInfoList(System.Int32,System.String,System.String)">
+            <summary>
+            使用指定的区域语言获取 FRM_SYSTEMINFO 的所有列的列表数据（名称列则只返回指定区域语言的列）。
+            </summary>
+            <param name="sysID"></param>
+            <param name="sysValue"></param>
+            <param name="cultureName">要获取名称列对应的区域语言，传递空则默认获取当前语言。</param>
+            <returns>如果没有数据则返回长度为 0 的 List 对象。 </returns>
+        </member>
+        <member name="M:BFC.FRM.Dao.IDLSystemInfoExt.GetSystemInfoModel(System.Int32,System.Int32,System.String)">
+            <summary>
+            使用指定的区域语言获取 FRM_SYSTEMINFO 一行数据。
+            </summary>
+            <param name="sysID"></param>
+            <param name="sysSubID"></param>
+            <param name="cultureName">要获取名称列对应的区域语言，传递空则默认获取当前语言。</param>
+            <returns>如果没有数据则返回 null。 </returns>
+        </member>
+        <member name="M:BFC.FRM.Dao.IDLSystemInfoExt.GetSystemInfoModel(System.Int32,System.String,System.String)">
+            <summary>
+            通过 SysID 和 SysValue 以及使用指定的区域语言获取 FRM_SYSTEMINFO 一行数据。
+            如果获取到多行数据则只返回第一行。
+            </summary>
+            <param name="sysID"></param>
+            <param name="sysValue"></param>
+            <param name="cultureName">要获取名称列对应的区域语言，传递空则默认获取当前语言。</param>
+            <returns>如果没有数据则返回 null。 </returns>
+        </member>
+        <member name="T:BFC.FRM.Dao.InfraTemplateDaoBase">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:BFC.FRM.Dao.InfraTemplateDaoBase.#ctor">
+            <summary>
+            默认构造涵数。
+            内部建立DataAccessTemplate 对象。
+            </summary>
+        </member>
+        <member name="M:BFC.FRM.Dao.InfraTemplateDaoBase.#ctor(BFC.FRM.Dao.InfraTemplateDaoBase)">
+            <summary>
+            使用　DAO　对象作为参数构造新的实例。此时，两个 Dao 对象将共享连接。
+            </summary>
+            <param name="dao"></param>
+        </member>
+        <member name="P:BFC.FRM.Dao.InfraTemplateDaoBase.MultiConditionSeparators">
+            <summary>
+            SQL 语句多条件查询分隔符。
+            </summary>
+        </member>
+        <member name="M:BFC.FRM.Dao.InfraTemplateDaoBase.GetSqlValueString(System.Object)">
+            <summary>
+            
+            </summary>
+            <param name="value"></param>
+            <returns></returns>
+        </member>
+        <member name="M:BFC.FRM.Dao.InfraTemplateDaoBase.GetSqlValueString(System.Nullable{System.DateTime},System.String)">
+            <summary>
+            
+            </summary>
+            <param name="date"></param>
+            <param name="format"></param>
+            <returns></returns>
+        </member>
+        <member name="M:BFC.FRM.Dao.InfraTemplateDaoBase.GetLikeSqlValueString(System.Object)">
+            <summary>
+            
+            </summary>
+            <param name="value"></param>
+            <returns></returns>
+        </member>
+        <member name="M:BFC.FRM.Dao.InfraTemplateDaoBase.GetLikeSqlValueString(System.Object,System.Boolean,System.Boolean)">
+            <summary>
+            
+            </summary>
+            <param name="value"></param>
+            <param name="isLeftLike"></param>
+            <param name="isRightLike"></param>
+            <returns></returns>
+        </member>
+        <member name="M:BFC.FRM.Dao.InfraTemplateDaoBase.GetMultiSqlFuzzyQueryCondition(System.String,System.String)">
+            <summary>
+            指定字段名和 string 类型的值集合组装多个 SQL 检索条件字符串返回。
+            该方法适用于名称之类固定为模糊查询之类的检索。
+            </summary>
+            <param name="fieldName">组装检索条件的字段名，可以包含表前缀或函数，例如：T.CASEID,UPPER(T.CASENAME)</param>
+            <param name="valueCollection">
+            检索条件的值集合，使用“,”或“，”或空格分隔的一系列值。
+            如果该值为 null 或 empty 则返回 "1=1"。
+            不需要带上模糊查询通配符，例如：ABC，方法会自动加上通配符变成 %ABC%；
+            如果带上模糊查询通配符，例如：ABC% 则，方法不会自动加上通配符，保持 ABC% 。
+            </param>
+            <returns>
+            如果参数 valueCollection 值为 null 或 empty 则返回 "1=1"；
+            如果没有任何值，只有分隔符，则返回 "1=1"；
+            否则返回实际的检索条件。
+            </returns>
+        </member>
+        <member name="M:BFC.FRM.Dao.InfraTemplateDaoBase.GetMultiSqlQueryCondition(System.String,System.String,System.Type)">
+            <summary>
+            指定字段名和 string 类型的值集合组装多个 SQL 检索条件字符串返回。
+            该方法适用于主键编号之类的检索。
+            </summary>
+            <param name="fieldName">组装检索条件的字段名，可以包含表前缀或函数，例如：T.CASEID,UPPER(T.CASENAME)</param>
+            <param name="valueCollection">
+            检索条件的值集合，使用“,”或“，”分隔的一系列值。
+            如果该值为 null 或 empty 则返回 "1=1"。
+            当 valueType 为 string、char以及Guid 类型时，valueCollection 可以直接带上模糊查询通配符以达到模糊查询目的，例如：%ABC,1234R。
+            </param>
+            <param name="valueType">值类型。标识该字段值所属类型。</param>
+            <returns>
+            如果参数 valueCollection 值为 null 或 empty 则返回 "1=1"；
+            如果没有任何值，只有分隔符，则返回 "1=1"；
+            否则返回实际的检索条件。
+            </returns>
+        </member>
+        <member name="M:BFC.FRM.Dao.InfraTemplateDaoBase.GetSqlFuzzyQueryCondition(System.String,System.String)">
+            <summary>
+            指定字段名和实际类型的值组装 SQL 模糊检索条件字符串返回。
+            该方法适用于名称之类固定为模糊查询之类的检索。
+            </summary>
+            <param name="fieldName">组装检索条件的字段名，可以包含表前缀或函数，例如：T.CASEID,UPPER(T.CASENAME)</param>
+            <param name="value">组装检索条件实际类型的值。只能是简单值类型数据。不能为数组。
+            不需要带上模糊查询通配符，例如：ABC，方法会自动加上通配符变成 %ABC%；
+            如果带上模糊查询通配符，例如：ABC% 则，方法不会自动加上通配符，保持 ABC% 。
+            </param>
+            <returns>
+            当 value 为 null 或零长度字符串时，返回 “(1=1)”；
+            否则返回实际条件字符串。
+            </returns>
+        </member>
+        <member name="M:BFC.FRM.Dao.InfraTemplateDaoBase.GetSqlQueryCondition(System.String,System.Object)">
+            <summary>
+            指定字段名和实际类型的值组装 SQL 检索条件字符串返回。
+            该方法适用于主键编号之类的检索。
+            </summary>
+            <param name="fieldName">组装检索条件的字段名，可以包含表前缀或函数，例如：T.CASEID,UPPER(T.CASENAME)</param>
+            <param name="value">组装检索条件实际类型的值。只能是简单值类型数据。不能为数组。
+            当该值为 string、char以及Guid 类型时，可以直接带上模糊查询通配符以达到模糊查询目的，例如：%ABC。
+            </param>
+            <returns>
+            当 value 为 null 或零长度字符串时，返回 “(1=1)”；
+            否则返回实际条件字符串。
+            </returns>
+        </member>
+        <member name="F:BFC.FRM.Dao.InfraTemplateDaoBase.isInternalDataAccess">
+            <summary>
+            是否内部实例化的 DataAccessTemplate 对象。
+            </summary>
+        </member>
+        <member name="P:BFC.FRM.Dao.InfraTemplateDaoBase.DataAccessClient">
+            <summary>
+            获取访问数据库的 IDataAccess 对象。
+            </summary>
+        </member>
+        <member name="M:BFC.FRM.Dao.InfraTemplateDaoBase.BeginTrans">
+            <summary>
+            开始一个事务。
+            </summary>
+        </member>
+        <member name="M:BFC.FRM.Dao.InfraTemplateDaoBase.RollbackTrans">
+            <summary>
+            回滚当前的事务。
+            </summary>
+        </member>
+        <member name="M:BFC.FRM.Dao.InfraTemplateDaoBase.CommitTrans">
+            <summary>
+            提交当前事务。
+            </summary>
+        </member>
+        <member name="P:BFC.FRM.Dao.InfraTemplateDaoBase.IsTransaction">
+            <summary>
+            获取当前 Dao 对象是否正在事务中。
+            </summary>
+        </member>
+        <member name="P:BFC.FRM.Dao.InfraTemplateDaoBase.LoginUser">
+            <summary>
+            取得当前系统登录用户名。
+            </summary>
+        </member>
+        <member name="P:BFC.FRM.Dao.InfraTemplateDaoBase.DateFormatForDB">
+            <summary>
+            用于数据库SQL语句中的日期格式字符串。
+            </summary>
+        </member>
+        <member name="P:BFC.FRM.Dao.InfraTemplateDaoBase.DateTimeFormatForDB">
+            <summary>
+            用于数据库SQL语句中的日期时间格式字符串。
+            </summary>
+        </member>
+        <member name="P:BFC.FRM.Dao.InfraTemplateDaoBase.TimeFormatForDB">
+            <summary>
+            用于数据库SQL语句中的日期时间格式字符串。
+            </summary>
+        </member>
+        <member name="P:BFC.FRM.Dao.InfraTemplateDaoBase.Disposed">
+            <summary>
+            是否已经调用 Dispose() 方法。
+            </summary>
+        </member>
+        <member name="M:BFC.FRM.Dao.InfraTemplateDaoBase.Dispose">
+            <summary>
+            释放对象占有的资源，如果是内部建立的 DataAccessTemplate 对象，则自动关闭它并放入连接池。
+            </summary>
+        </member>
+        <member name="M:BFC.FRM.Dao.InfraTemplateDaoBase.Dispose(System.Boolean)">
+            <summary>
+            
+            </summary>
+            <param name="disposing"></param>
+        </member>
+    </members>
+</doc>

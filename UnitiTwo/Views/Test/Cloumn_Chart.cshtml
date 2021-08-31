@@ -1,0 +1,139 @@
+﻿@{
+    ViewBag.Title = "NoticeView";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@*<h1>ColumnChart</h1>
+<input type="button" value="OpenChart" onclick="showChartWindow()" />*@
+选择报表：<input id="chartType" class="mini-combobox" style="width:150px;" textField="text" valueField="id"
+       url="@Url.Content("~/Content/data/chart.txt")" value="003" showNullItem="false" allowInput="false" onvaluechanged="onChartTypeChanged" />  
+<div id="win1" class="mini-window" title="ColumnChart" style="width:80%;height:500px;"
+     showToolbar="true" showFooter="true" showModal="false" allowResize="true" showCloseButton="false">
+    <div id="chartContainer" style="width:800px;height:450px;"></div>
+</div>
+
+@section scripts{
+<script src="https://cdn.bootcss.com/echarts/3.7.1/echarts.min.js"></script>
+<script type="text/javascript">
+
+    mini.parse();
+    var myChart = echarts.init(document.getElementById('chartContainer'));
+    var win = mini.get("win1");
+    var chartType = mini.get("chartType");
+    //option = {
+    //    title: {
+    //        text: '世界人口总量',
+    //        subtext: '数据来自网络'
+    //    },
+    //    tooltip: {
+    //        trigger: 'axis',
+    //        axisPointer: {
+    //            type: 'shadow'
+    //        }
+    //    },
+    //    legend: {
+    //        data: ['2011年', '2012年']
+    //    },
+    //    grid: {
+    //        left: '3%',
+    //        right: '4%',
+    //        bottom: '3%',
+    //        containLabel: true
+    //    },
+    //    xAxis: {
+    //        type: 'value',
+    //        boundaryGap: [0, 0.01]
+    //    },
+    //    yAxis: {
+    //        type: 'category',
+    //        data: ['巴西2', '印尼', '美国', '印度', '中国', '世界人口(万)']
+    //    },
+    //    series: [
+    //        {
+    //            name: '2011年',
+    //            type: 'bar',
+    //            data: [18203, 23489, 29034, 104970, 131744, 630230]
+    //        },
+    //        {
+    //            name: '2012年',
+    //            type: 'bar',
+    //            data: [19325, 23438, 31000, 121594, 134141, 681807]
+    //        }
+    //    ]
+    //};
+
+    function buildChart() {
+
+        var chart = echarts.init(document.getElementById('chartContainer'));
+        //chart.setOption(option);
+    }
+    function showChartWindow() {
+        var param = chartType.getValue();
+        $.ajax({
+            url: "/Test/GetColumnChartData?param=" + param,
+            type: "post",
+            success: function (text) {
+                if (text.data) {
+                    myChart.clear();
+                    optionData = text.data;
+                    myChart.setOption({
+                        title: optionData.title,
+                        legend: optionData.legend,
+                        tooltip: optionData.tooltip,
+                        //tooltip: {
+                        //    trigger: 'axis',
+                        //    axisPointer: {
+                        //        type: 'shadow'
+                        //    }
+                        //},
+                        //tooltip: {
+                        //    trigger: 'axis',
+                        //    axisPointer: {
+                        //        type: 'cross',
+                        //        label: {
+                        //            backgroundColor: '#6a7985'
+                        //        }
+                        //    }
+                        //},
+                        toolbox: {
+                            show: true,
+                            feature: {
+                                //magicType: {
+                                //    type: ['line', 'bar']
+                                //},
+                                saveAsImage: {
+                                    type: 'png',
+                                    show: true,
+                                    title: '保存为图片',
+                                },
+                                restore:{show:true}
+                            }
+                        },
+                        grid: {
+                            left: '3%',
+                            right: '4%',
+                            bottom: '3%',
+                            containLabel: true
+                        },
+                        xAxis: optionData.xAxis,
+                        yAxis: optionData.yAxis,
+                        series: optionData.series
+                    });
+                } else {
+                    mini.alert("图表获取失败！");
+                    win.hidden();
+                }
+
+            },
+            error: function () {
+            }
+        });       
+        win.show();
+        //buildChart();
+    }
+    showChartWindow();
+    //公司选择下拉框改变
+    function onChartTypeChanged(e) {
+        showChartWindow();
+    }
+</script>
+    }

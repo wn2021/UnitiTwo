@@ -1,0 +1,138 @@
+﻿@{
+    ViewBag.Title = "MenuEdit";
+}
+
+<form id="form1" method="post">
+    <div class="mini-fit'">
+        <table border="0" cellpadding="2" cellspacing="0" class="EditTable" style="width: 100%">
+            <tr>
+                <td class="tdLabel" style="width: 20%;"> 菜单ID：</td>
+                <td class="tdText" style="width: 80%;"><input class="mini-textbox" id="m_id" name="m_id" style="width: 100%;" value="@Model.m_id"></td>
+            </tr>
+            <tr>
+                <td class="tdLabel" style="width: 20%;"> 菜单状态：</td>
+                <td class="tdText" style="width: 80%;">
+                    <input id="m_status" class="mini-combobox" name="m_status" style="width:100%;" textField="description" valueField="sysvalue"
+                           url="/Common/GetSystemInfoList?sysid=1002" value="@Model.m_status" />
+                </td>
+            </tr>
+            <tr>
+                <td class="tdLabel" style="width: 20%;"> 菜单层级：</td>
+                <td class="tdText" style="width: 80%;">
+                    <input id="m_level" class="mini-combobox" name="m_level" style="width:100%;" textField="description" valueField="sysvalue" emptyText="请选择..."
+                           url="/Common/GetSystemInfoList?sysid=1001" value="@Model.m_level" required="true" allowInput="false" showNullItem="true" nullItemText="请选择..." onvaluechanged="onLevelChanged" />
+                </td>
+            </tr>
+            <tr>
+                <td class="tdLabel" style="width: 20%;"> 父菜单：</td>
+                <td class="tdText" style="width: 80%;">
+                    <input id="m_parent_id" class="mini-combobox" name="m_parent_id" style="width:100%;" textField="text" valueField="id" emptyText="请选择..."
+                           url="/Menu/MenuBasic" value="@Model.m_parent_id" allowInput="false" showNullItem="true" nullItemText="请选择..." />
+                </td>
+            </tr>
+            <tr>
+                <td class="tdLabel" style="width: 20%;"> 菜单样式：</td>
+                <td class="tdText" style="width: 80%;"><input class="mini-textbox" id="m_iconCls" name="m_iconCls" style="width: 100%;" value="@Model.m_iconCls" required="true" ></td>
+            </tr>
+            <tr>
+                <td class="tdLabel" style="width: 20%;"> 菜单文本：</td>
+                <td class="tdText" style="width: 80%;"><input class="mini-textbox" id="m_text" name="m_text" style="width: 100%;" value="@Model.m_text" required="true" ></td>
+            </tr>
+            <tr>
+                <td class="tdLabel" style="width: 20%;"> 菜单URL：</td>
+                <td class="tdText" style="width: 80%;"><input class="mini-textbox" id="m_url" name="m_url" style="width: 100%;" value="@Model.m_url"></td>
+            </tr>            
+        </table>
+
+        <div style="text-align:center;padding:10px;">
+            <a class="mini-button" onclick="onOk" style="width:60px;margin-right:20px;">确定</a>
+            <a class="mini-button" onclick="onCancel" style="width:60px;">取消</a>
+        </div>
+    </div>
+</form>
+
+
+<script type="text/javascript">
+
+    mini.parse();
+    var form = new mini.Form("form1");
+    var levelCombo = mini.get("m_level");
+    var pidCombo = mini.get("m_parent_id");
+    var st = mini.get("m_status");
+    if (st.getValue() == '') {
+        st.setValue("1");
+    }
+    st.disable();
+    var mid = mini.get("m_id");
+    mid.disable();
+    //保存
+    function SaveData() {       
+        if (!CheckBaforeSave()) { return; }       
+        var form = new mini.Form("#form1");
+        form.validate();
+        if (form.isValid() == false) return;
+        var data = form.getData();      //获取表单多个控件的数据
+        $.ajax({
+            url: "/Menu/MenuSave",
+            type: "post",
+            data: data,
+            success: function (text) {
+                if (text.return != "-1") {
+                    CloseWindow("提交成功");
+                } else { alert(text.toString()); }
+               
+            }
+        });
+    }
+    //保存前检查
+    function CheckBaforeSave() {
+        if (levelCombo.getValue() == '') {
+            alert("请选择菜单层级！");
+            return false;
+        }        
+        if (levelCombo.getValue() != '0') {
+            if (pidCombo.getValue() == '') {
+                alert("请选择父菜单！");
+                return false;
+            } 
+        }       
+        var mtxt = mini.get("m_text");
+        if (mtxt.getValue == '') {
+            alert("菜单文本不能为空！");
+            return false;
+        }
+        return true;
+    }
+    //菜单层级选择值改变
+    function onLevelChanged(e) {
+        var clevel = levelCombo.getValue();
+
+        pidCombo.setValue("");
+
+        var url = "/Menu/MenuBasic?childLevel=" + clevel
+        pidCombo.setUrl(url);
+
+        pidCombo.select(0);
+    }
+    function GetData() {
+        var o = form.getData();
+        return o;
+    }
+    function CloseWindow(action) {
+        if (action == "close" && form.isChanged()) {
+            if (confirm("数据被修改了，是否先保存？")) {
+                return false;
+            }
+        }
+        if (window.CloseOwnerWindow) return window.CloseOwnerWindow(action);
+        else window.close();
+    }
+    //确认
+    function onOk(e) {
+        SaveData();
+    }
+    //取消
+    function onCancel(e) {
+        CloseWindow("cancel");
+    }
+</script>

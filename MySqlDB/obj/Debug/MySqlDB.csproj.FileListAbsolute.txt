@@ -1,0 +1,7 @@
+D:\Learn\miniUI.NET\UnitiTwo\MySqlDB\bin\Debug\MySqlDB.dll
+D:\Learn\miniUI.NET\UnitiTwo\MySqlDB\bin\Debug\MySqlDB.pdb
+D:\Learn\miniUI.NET\UnitiTwo\MySqlDB\bin\Debug\BFC.SDK.dll
+D:\Learn\miniUI.NET\UnitiTwo\MySqlDB\bin\Debug\MySql.Data.dll
+D:\Learn\miniUI.NET\UnitiTwo\MySqlDB\obj\Debug\MySqlDB.dll
+D:\Learn\miniUI.NET\UnitiTwo\MySqlDB\obj\Debug\MySqlDB.pdb
+D:\Learn\miniUI.NET\UnitiTwo\MySqlDB\obj\Debug\MySqlDB.csprojResolveAssemblyReference.cache

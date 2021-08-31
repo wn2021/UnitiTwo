@@ -1,0 +1,141 @@
+﻿@{
+    Layout = Layout = "~/Views/Shared/_Layout.cshtml"; ;
+}
+<div style="width:100%;">
+    <div class="mini-toolbar" style="border-bottom:0;padding:0px;">
+        <table style="width:100%;">
+            <tr>
+                <td style="width:100%;">
+                    <a class="mini-button" iconCls="icon-add" onclick="add()">添加</a>
+
+                </td>
+                <td style="white-space:nowrap;">
+                    <input id="key" name="key" class="mini-textbox" emptyText="请输入姓名" style="width:150px;" />
+                    <a class="mini-button" onclick="search()">查询</a>
+                </td>
+            </tr>
+        </table>
+    </div>
+</div>
+
+<div id="datagrid1" class="mini-datagrid" style="width:100%;height:280px;" allowResize="true" pageSize="10"
+     url="/Company/CompanyList" idField="id" multiSelect="true" pagesize="20" showpager="true">
+    <div property="columns">
+        <!--<div type="indexcolumn"></div>        -->
+        <div type="checkcolumn"></div>
+        <div field="CompanyName" width="120" headerAlign="center" allowSort="true">公司名称</div>
+        <div field="Address" width="120" headerAlign="center" allowSort="true">地址</div>
+        <div field="mobile" width="120" headerAlign="center" allowSort="true">电话</div>
+        <div name="action" width="100" renderer="onGenderRenderer" headerAlign="center">操作</div>
+    </div>
+</div>
+
+<script>
+
+    mini.parse();
+    var grid = mini.get("datagrid1");
+    grid.load();
+
+    grid.on("drawcell", function (e) {
+        var record = e.record,
+            column = e.column,
+            field = e.field,
+            value = e.value;
+
+        //action列，超连接操作按钮
+        if (column.name == "action") {
+            e.cellStyle = "text-align:center";
+            e.cellHtml = '<a   class="mini-button" style="width:60px;"   href="javascript:edit(\'' + record.id + '\')">修改</a>&nbsp; '
+                + '<a   class="mini-button" style="width:60px;"  href="javascript:del(\'' + record.id + '\')" >删除</a>'
+        }
+    });
+
+
+    function search() {
+        var key = mini.get("key").value;
+
+        grid.load({ key: key });
+    }
+    $("#key").bind("keydown", function (e) {
+        if (e.keyCode == 13) {
+            search();
+        }
+    });
+
+    function del(rowid) {
+        if (rowid.length > 0) {
+            if (confirm("确定删除选中记录？")) {
+
+                grid.loading("操作中，请稍后......");
+                $.ajax({
+                    url: "/Home/Delete?id=" + rowid,
+                    type: "post",
+                    success: function (text) {
+                        grid.reload();
+                    },
+                    error: function () {
+
+                    }
+                });
+            }
+        } else {
+            alert("请选中一条记录");
+        }
+    }
+
+
+
+    //添加、修改
+    function edit(rowid) {
+
+        mini.open({
+            targetWindow: window,
+
+            url: "/Company/CompanyEdit?Id=" + rowid,
+            title: "设置条件", width: 800, height: 600,
+            onload: function () {
+                var iframe = this.getIFrameEl();
+                var data = { action: "new" };
+
+                iframe.contentWindow.OpenContext = { parent: window, popwin: this };
+
+            },
+            ondestroy: function (action) {
+                loading();
+                grid.reload();
+            }
+        });
+
+    }
+
+    //新建
+    function add() {
+        mini.open({
+            targetWindow: window,
+
+            url: "/Company/CompanyEdit",
+            title: "添加菜单", width: 700, height: 300,
+            onload: function () {
+                var iframe = this.getIFrameEl();
+                var data = { action: "new" };
+                loading();
+                iframe.contentWindow.OpenContext = { parent: window, popwin: this };
+            },
+            ondestroy: function (action) {
+
+                grid.reload();
+            }
+        });
+    }
+
+    function loading() {
+        mini.mask({
+            el: document.body,
+            cls: 'mini-mask-loading',
+            html: '加载中...'
+        });
+        setTimeout(function () {
+            mini.unmask(document.body);
+        }, 1000);
+    }
+</script>

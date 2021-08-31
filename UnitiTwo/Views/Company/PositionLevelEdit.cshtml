@@ -1,0 +1,83 @@
+﻿@{
+    ViewBag.Title = "PositionLevelEdit";
+}
+
+<form id="form1" method="post">
+
+
+    <div class="mini-fit'">
+        <input name="upl_id" id="ud_id" class="mini-hidden" value="@Model.upl_id" />
+        <input name="upl_company_id" id="upl_company_id" class="mini-hidden" value="@Model.upl_company_id" />
+        <input name="upl_department_id" id="upl_department_id" class="mini-hidden" value="@Model.upl_department_id" />
+        <table border="0" cellpadding="2" cellspacing="0" class="EditTable" style="width: 100%">
+            <tr>
+                <td class="tdLabel" style="width: 30%;"> 所属公司：</td>
+                <td class="tdText" style="width: 70%;">
+                    <input class="mini-textbox" id="upl_company_name" name="upl_company_name" style="width: 200px;" value="@Model.upl_company_name" required="true">
+                </td>
+            </tr>
+            <tr>
+                <td class="tdLabel" style="width: 30%;"> 所属部门：</td>
+                <td class="tdText" style="width: 70%;">
+                    <input class="mini-textbox" id="upl_department_name" name="upl_department_name" style="width: 200px;" value="@Model.upl_department_name" required="true"></td>
+            </tr>
+            <tr>
+                <td class="tdLabel" style="width: 30%;"> 职级名称：</td>
+                <td class="tdText" style="width: 70%;"><input class="mini-textbox" id="upl_name" name="upl_name" style="width: 200px;" value="@Model.upl_name" required="true"></td>
+            </tr>  
+            @*<tr>
+                <td class="tdLabel" style="width: 30%;"> 职级状态：</td>
+                <td class="tdText" style="width: 70%;"><input id="upl_status" class="mini-combobox" name="upl_status" style="width:200px;" textField="description" valueField="sysvalue" emptyText="请选择..."
+       url="/Common/GetSystemInfoList?sysid=1002" value="@Model.upl_status" allowInput="false" showNullItem="true" nullItemText="请选择..." />   </td>
+            </tr>*@          
+        </table>
+
+        <div style="text-align:center;padding:10px;">
+            <a class="mini-button" onclick="onOk" style="width:60px;margin-right:20px;">确定</a>
+            <a class="mini-button" onclick="onCancel" style="width:60px;">取消</a>
+        </div>
+    </div>
+</form>
+
+
+<script type="text/javascript">
+
+    mini.parse();
+    var form = new mini.Form("form1");
+    var st = mini.get("upl_status");
+    st.disable();
+    function SaveData() {
+        var form = new mini.Form("#form1");
+        form.validate();
+        if (form.isValid() == false) return;
+        var data = form.getData();
+        $.ajax({
+            url: "/Company/SaveLevel",
+            type: "post",
+            data: data,
+            success: function (text) {
+                CloseWindow("提交成功");
+            }
+        });
+    }
+
+    function GetData() {
+        var o = form.getData();
+        return o;
+    }
+    function CloseWindow(action) {
+        if (action == "close" && form.isChanged()) {
+            if (confirm("数据被修改了，是否先保存？")) {
+                return false;
+            }
+        }
+        if (window.CloseOwnerWindow) return window.CloseOwnerWindow(action);
+        else window.close();
+    }
+    function onOk(e) {
+        SaveData();
+    }
+    function onCancel(e) {
+        CloseWindow("cancel");
+    }
+</script>

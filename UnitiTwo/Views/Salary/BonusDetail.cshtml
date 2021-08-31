@@ -1,0 +1,132 @@
+﻿@{
+    Layout = Layout = "~/Views/Shared/_Layout.cshtml"; ;
+}
+<style type="text/css">
+    .asLabel .mini-textbox-border,
+    .asLabel .mini-textbox-input,
+    .asLabel .mini-buttonedit-border,
+    .asLabel .mini-buttonedit-input,
+    .asLabel .mini-textboxlist-border {
+        border: 0;
+        background: none;
+        cursor: default;
+    }
+
+    .asLabel .mini-buttonedit-button,
+    .asLabel .mini-textboxlist-close {
+        display: none;
+    }
+
+    .asLabel .mini-textboxlist-item {
+        padding-right: 8px;
+    }
+    </style>
+<div style="width:100%;">
+    <div style="width:100%;">
+        <div class="mini-toolbar" style="border-bottom:0;padding:0px;">
+            <table style="width:100%;">
+                <tr>
+
+                    <td align="center">
+                        月份：<input id="strYmonth" class="mini-textbox asLabel" style="width:80px;" value="@Model.salaryMonth" />
+                        <span class="separator"></span>
+                        所属公司：<input id="companyId" class="mini-combobox" style="width:120px;" textField="OrganizationName" valueField="OrganizationId" emptyText="请选择..."
+                                    url="/Common/GetCompanys" value="@Model.companyId" showNullItem="true" nullItemText="请选择..."  />
+                        <span class="separator"></span>
+                        员工：<input id="employeeId" name="employeeId" class="mini-textbox asLabel" value="@Model.employeeId"style="width:100px;"/>
+                        <input id="employeeName" name="employeeName" class="mini-textbox asLabel" value="@Model.employeeName" />
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    <div id="datagrid1" class="mini-datagrid" style="width:100%;height:400px;"
+         url="/Salary/GetBonusDetail" idField="employee_id" allowResize="false" pageSize="31"
+          ondrawsummarycell="onDrawSummaryCell" showSummaryRow="true" >
+        <div property="columns">
+            <div type="indexcolumn" width="30px">No.</div>
+            <div field="company_name" width="100px" headerAlign="center" allowSort="true" >所属公司</div>
+            <div field="department_name" width="100px" headerAlign="center" allowSort="true" >所属部门</div>
+            <div field="employee_id" width="80px" headerAlign="center" allowSort="true" align="center">员工编号</div>
+            <div field="employee_name" width="100px" headerAlign="center" allowSort="true" >员工姓名</div>
+            <div field="bonus_month" width="60px" headerAlign="center" allowSort="true" align="center">月份</div>
+            <div field="bonus_type_name" width="100px" headerAlign="center" allowSort="true" align="center" >奖金类型</div>
+            <div field="bonus_from" width="100px" headerAlign="center" allowSort="true" >项目编号</div>
+            <div field="bonus_amount" width="100px" headerAlign="center" allowSort="true" align="right" dataType="currency" currencyUnit="￥" summaryType="sum"> 奖金金额</div>
+        </div>
+    </div>
+    <div style="text-align:center;padding:10px;">
+        <a class="mini-button" iconCls="icon-download" onclick="exportExcel()">导出</a>
+        <a class="mini-button" onclick="onOk" style="width:60px;margin-right:20px;">关闭</a>
+    </div>
+</div>
+<script>
+    mini.parse();
+    var grid = mini.get("datagrid1");
+    //加载画面
+    var yMonth = mini.get("strYmonth");
+    var cmbCmp = mini.get("companyId");
+    cmbCmp.disable();
+    var txtEmp = mini.get("employeeId");
+    var condition = { salaryMonth: yMonth.value, companyId: cmbCmp.getValue(), employeeId: txtEmp.value };
+    grid.load({ condition: condition });
+
+    //添加合计行
+    function onDrawSummaryCell(e) {
+        var result = e.result;
+        var grid = e.sender;
+        var rows = e.data;
+
+        //客户端汇总计算
+        if (e.field == "employee_id") {
+            //e.cellHtml = "合计: " + e.cellHtml;
+            e.cellStyle = "text-align:center";
+            var s = "<span style='color:black;'>"
+            s += "<strong>";
+            s += "合计: ";
+            s += "</strong>" + "</span>";
+            e.cellHtml = s;
+        }
+
+        if (e.field == "bonus_amount") {
+            e.cellStyle = "text-align:right";
+            //var total = 0;
+            //for (var i = 0, l = rows.length; i < l; i++) {
+            //    var row = rows[i];
+            //    var t = row.bonus_amount;
+            //    if (isNaN(t)) continue;
+            //    total += t;
+            //}
+            s = "<span style='color:black;'>"
+            s += "<strong>";
+            //total = Math.floor(total*100)/100
+            //s += "￥" + total;
+            s += e.cellHtml;
+            s += "</strong>" + "</span>";
+            e.cellHtml = s;
+        }
+    }
+    //导出
+    function exportExcel() {
+        var data = grid.getData();
+        if (!data || data.length == 0) {
+            return;
+        }
+        window.location.href = "/Salary/ExportBonusDetail?salaryMonth=" + yMonth.value + "&companyId=" + cmbCmp.getValue()
+        + "&employeeId=" + txtEmp.value;
+
+    }
+    function CloseWindow(action) {
+        if (action == "close" && form.isChanged()) {
+            if (confirm("数据被修改了，是否先保存？")) {
+                return false;
+            }
+        }
+        if (window.CloseOwnerWindow) return window.CloseOwnerWindow(action);
+        else window.close();
+    }
+    //关闭画面
+    function onOk(e) {
+        CloseWindow("cancel");
+    }
+</script>

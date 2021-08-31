@@ -1,0 +1,237 @@
+﻿@{
+    Layout = Layout = "~/Views/Shared/_Layout.cshtml"; ;
+}
+
+    <div title="计划查询"  style="width:95%;">
+        <div style="width:100%;">
+            <div class="mini-toolbar" style="border-bottom:0;padding:0px;">
+                <table style="width:100%;">
+                    <tr>
+                        <td>
+                            <a class="mini-button" iconCls="icon-add" onclick="add()">增加</a>
+                            <a class="mini-button" iconCls="icon-edit" onclick="edit()">编辑</a>
+                            <a class="mini-button" iconCls="icon-remove" onclick="remove()">删除</a>
+                        </td>
+                        <td align="right">
+                            年份：<input id="strYear" class="mini-textbox" style="width:50px;" />
+                            公司：<input id="companyId" class="mini-combobox" style="width:120px;" textField="OrganizationName" valueField="OrganizationId" emptyText="请选择..."
+                                      url="/Common/GetCompanys" value="" showNullItem="true" nullItemText="请选择..." />
+                            <span class="separator"></span>
+                            奖金类型：<input id="bonusType" class="mini-combobox" style="width:100px;" url="/Common/GetSystemInfoList?sysid=3007"
+                                        textField="description" valueField="sysvalue" emptyText="请选择..."
+                                        value="" showNullItem="true" nullItemText="请选择..." />
+                            <span class="separator"></span>
+                            计划状态：<input id="planStatus" class="mini-combobox" style="width:80px;" url="/Common/GetSystemInfoList?sysid=3006"
+                                        textField="description" valueField="sysvalue" emptyText="请选择..."
+                                        value="" showNullItem="true" nullItemText="请选择..." />
+                            <span class="separator"></span>
+                            员工：<input id="employeeId" name="employeeId" class="mini-buttonedit" onbuttonclick="onButtonEdit" textName="" style="width:120px;" />
+                            <input id="employeeName" name="employeeName" class="mini-textbox asLabel" readOnly="true" style="width:100px;" />
+                            <a class="mini-button" onclick="search()">查询</a>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        <div id="datagrid1" class="mini-datagrid" style="width:100%;height:500px;"
+             url="/Salary/GeBonusPlanList" idField="bph_plan_id" allowResize="true" pageSize="20" allowCellSelect="true"
+             multiSelect="true">
+            <div property="columns">
+                <div type="checkcolumn"></div>
+                <div field="bph_plan_id" width="80px" headerAlign="center" allowSort="true" align="center">计划编号</div>
+                <div field="bph_company_name" width="120px" headerAlign="center" allowSort="true">公司名称</div>
+                <div field="bph_bonus_type_name" width="80px" headerAlign="center" allowSort="true">奖金类型</div>
+                <div field="bph_bonus_from" width="80px" headerAlign="center" allowSort="true">项目编号</div>
+                <div field="bph_bonus_month" width="50px" headerAlign="center" allowSort="true" align="center">发放月份</div>
+                <div field="bph_status_name" width="40px" headerAlign="center" allowSort="true">状态</div>
+                <div field="bph_remarks" width="280px" headerAlign="center" allowSort="true">备注</div>
+            </div>
+        </div>
+        <div style="width:100%;">
+            <div class="mini-toolbar" style="padding-top:3px;">
+                <table style="width:100%;">
+                    <tr>
+                        <td>
+                            <a class="mini-button" iconCls="icon-ok" onclick="confirm()">审批通过</a>
+                            <a class="mini-button" iconCls="icon-cancel" onclick="cancel()">驳回</a>
+                        </td>                       
+                    </tr>
+                </table>
+            </div>
+        </div>
+        </div>        
+<script>
+    mini.parse();
+    var grid = mini.get("datagrid1");
+    //设定默认选中月份
+    var txtYear = mini.get("strYear");
+    var myDate = new Date();
+    var intY = myDate.getFullYear();
+    txtYear.setValue(intY.toString());
+    var cmbCompany = mini.get("companyId");
+    var cmbType = mini.get("bonusType");
+    var cmbStatus = mini.get("planStatus");
+    var txtemp = mini.get("employeeId");
+    //加载画面
+    grid.load({ strYear: intY.toString() });
+   
+    //查询
+    function search() {
+        var condition = { strYear: txtYear.getValue(), companyId: cmbCompany.getValue(), bonusType: cmbType.getValue(), planStatus: cmbStatus.getValue(), employeeId: txtemp.text }
+        grid.load(condition);
+    }
+    
+    //编辑
+    function edit() {      
+        var row = grid.getSelected();
+        if (row) {           
+            mini.open({
+                targetWindow: window,
+
+                url: "/Salary/BonusPage?planId="+row.bph_plan_id+"&companyId=" + row.bph_company_id,
+                title: "编辑计划", width: 1000, height: 600,
+                onload: function () {
+                    var iframe = this.getIFrameEl();
+                    var data = { action: "edit" };
+                    iframe.contentWindow.OpenContext = { parent: window, popwin: this };
+
+                },
+                ondestroy: function (action) {
+                    grid.reload();
+                }
+            });
+            //var dname="detail";
+            //var tabs = mini.get("tabs1");
+            //var tab = tabs.getTab("detail");
+            //if (tab) { return; }
+            //else {
+            //    tab = { name: "detail", title: "编辑计划", url: "/Salary/BonusPage?planId=" + row.bph_plan_id + "&companyId=" + row.bph_company_id, showCloseButton: true };
+            //}
+            //tab = tabs.addTab(tab);
+            //var curtab = tabs.getActiveTab();
+            ////curtab.enabled = false;
+            ////active tab
+            //tabs.activeTab(tab);            
+        }
+    }
+    //增加
+    function add() {
+        mini.open({
+            targetWindow: window,
+
+            url: "/Salary/BonusPage",
+            title: "计划新建", width: 1000, height: 600,
+            onload: function () {
+                var iframe = this.getIFrameEl();
+                var data = { action: "new" };
+                iframe.contentWindow.OpenContext = { parent: window, popwin: this };
+            },
+            ondestroy: function (action) {
+                grid.reload();
+            }
+        });
+    }
+    //删除
+    function remove() {
+        var rows = grid.getSelecteds();
+        for (var i = 0; i < rows.length; i++) {
+            var row = rows[i];
+            if (row.bph_status != "00") {
+                mini.alert("非待审批状态不允许删除！");
+                //grid.deselectAll();
+                //grid.select(row);
+                return;
+            }
+        }
+        save("delete");
+    }
+    //审批通过
+    function confirm() {
+        var rows = grid.getSelecteds();
+        for (var i = 0; i < rows.length; i++) {
+            var row = rows[i];
+            if (row.bph_status != "00") {
+                mini.alert("非待审批状态不支持审批通过！");
+                //grid.deselectAll();
+                //grid.select(row);
+                return;
+            }
+        }
+        save("confirm");
+    }
+    //驳回
+    function cancel() {
+        var rows = grid.getSelecteds();
+        for (var i = 0; i < rows.length; i++) {
+            var row = rows[i];
+            if (row.bph_status != "00") {
+                mini.alert("非待审批状态不允许驳回！");
+                //grid.deselectAll();
+                //grid.select(row);
+                return;
+            }
+        }
+        save("cancel");
+    }
+    function save(updateType) {
+        var data = grid.getSelecteds();
+        var json = mini.encode(data);
+        grid.loading("保存中，请稍后......");
+        $.ajax({
+            url: "/Salary/UpdateBonusPlan",
+            data: { updateType: updateType, data: json },
+            type: "post",
+            success: function (text) {
+                var result = mini.decode(text)
+                if (result.success) {
+                    search();
+                    mini.alert("保存成功");
+                } else {
+                    alert("Server Error\n\n" + result.message + "\n\n" + result.stackTrace);
+                }
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                    alert("HTTP Error\n\n" + jqXHR.responseText);
+            },
+            complete: function () {
+                grid.unmask();
+            }
+        });
+    }
+    //选择员工按钮
+    function onButtonEdit(e) {
+        var btnEdit = this;
+        var lblName = mini.get("employeeName");
+        var companyId = mini.get("companyId").value;
+        if (companyId == "") {
+            mini.alert("请先选择所属公司！");
+            return;
+        }
+        mini.open({
+            url: "/Common/SelectEmployee?companyId=" + companyId ,
+            title: "选择列表",
+            width: '60%',
+            height: '80%',
+            showMaxButton: true,
+            onload: function () {
+                var iframe = this.getIFrameEl();
+
+            },
+            ondestroy: function (action) {
+                if (action == "ok") {
+                    var iframe = this.getIFrameEl();
+                    var data = iframe.contentWindow.GetData();
+                    data = mini.clone(data);    //必须
+                    if (data) {
+                        btnEdit.setValue(data.employeeId);
+                        btnEdit.setText(data.employeeId);
+                        lblName.setValue(data.employeeName);
+                        lblName.setText(data.employeeName);
+                    }
+                }
+
+            }
+        });
+
+    }
+</script>

@@ -1,0 +1,29 @@
+﻿@{
+    ViewBag.Title = "NoticeView";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<form id="form1" method="post">
+
+
+    <div class="mini-fit'" style="width: 100%;">
+       
+        <input class="mini-textarea" id="Content" name="Content" style="width:90%;height:400px;margin-left:5%;margin-top:20px;" value="@Model.Content"> 
+    </div>
+</form>
+
+@section scripts{
+
+<script type="text/javascript">
+    document.write('<link href="/Content/miniui/themes/default/miniui.css" rel="stylesheet" type="text/css" />');
+    mini.parse();
+    var form = new mini.Form("form1");
+   
+
+    function GetData() {
+        var o = form.getData();
+        return o;
+    }
+
+</script>
+    }

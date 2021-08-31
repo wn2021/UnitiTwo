@@ -1,0 +1,136 @@
+﻿@{
+    ViewBag.Title = "NoticeView";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<style type="text/css">
+    .progressbar {
+        position: relative;
+        background: #bbb;
+        width: 100%;
+        height: 16px;
+        overflow: hidden;
+    }
+
+    .progressbar-percent {
+        position: absolute;
+        height: 18px;
+        background: blue;
+        left: 0;
+        top: 0px;
+        overflow: hidden;
+        z-index: 1;
+    }
+
+    .progressbar-label {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        font-size: 13px;
+        color: White;
+        z-index: 10;
+        text-align: center;
+        height: 16px;
+        line-height: 16px;
+    }
+</style>
+@*@Url.Content("~/Content/data/tasks.txt")"*@ 
+@*<input type="button" value="测试" onclick="reload()" />*@
+<div text-align="center">
+    <label>名称：</label>
+    <input id="key" class="mini-textbox" style="width:150px;" onenter="onKeyEnter" />
+    <a class="mini-button" style="width:60px;" onclick="search()">查询</a>
+    <a class="mini-button" onclick="collapseAll()" >收缩所有</a>
+    <a class="mini-button" onclick="expandAll()" >展开所有</a>
+</div>
+<div id="treegrid1" class="mini-treegrid" style="width:80%;height:280px;"
+     url="/Test/GetTasks" showTreeIcon="true"
+     treeColumn="taskname" idField="UID" parentField="ParentTaskUID" resultAsTree="false"
+     allowResize="true" expandOnLoad="true"
+     ondrawcell="onDrawCell"
+     allowCellEdit="true" allowCellSelect="true" frozenStartColumn="0" frozenEndColumn="1">
+    <div property="columns">
+        <div type="indexcolumn">No.</div>
+        <div name="taskname" field="Name" width="260">
+            任务名称
+            @*<input property="editor" class="mini-textbox" style="width:100%;" />*@
+        </div>
+        <div field="PercentComplete" width="80">
+            进度
+            <input property="editor" class="mini-spinner" minValue="0" maxValue="100" value="0" style="width:100%;" />
+        </div>
+        <div field="Duration" width="60" align="right">
+            工期
+            <input property="editor" class="mini-spinner" minValue="0" maxValue="1000000" value="0" style="width:100%;" />
+        </div>
+        <div field="Start" width="80" dateFormat="yyyy-MM-dd">
+            开始日期
+            <input property="editor" class="mini-datepicker" style="width:100%;" />
+        </div>
+        <div field="Finish" width="80" dateFormat="yyyy-MM-dd">
+            完成日期
+            <input property="editor" class="mini-datepicker" style="width:100%;" />
+        </div>
+        <div type="checkboxcolumn" field="Critical" trueValue="1" falseValue="0" width="60" dateFormat="yyyy-MM-dd">
+            关键任务
+        </div>
+    </div>
+</div>
+
+@section scripts{
+
+<script type="text/javascript">
+
+    mini.parse();
+    var tree = mini.get("treegrid1");
+    function onDrawCell(e) {
+        var node = e.node,
+            column = e.column,
+            field = e.field,
+            value = e.value;
+
+        //超链接任务
+        if (field == "Name") {
+            e.cellHtml = '<a href="javascript:alert(\'' + node.UID + '\')" style="color:blue;text-decoration:underline;">' + node.Name + '</a>';
+        }
+        //格式化日期
+        if (field == "Finish") {
+            if (mini.isDate(value)) e.cellHtml = mini.formatDate(value, "yyyy年MM月dd日");
+        }
+        //工期
+        if (field == "Duration") {
+            e.cellHtml = value + "天";
+        }
+        //进度
+        if (field == "PercentComplete") {
+            e.cellHtml = '<div class="progressbar">'
+                            + '<div class="progressbar-percent" style="width:' + value + '%;"></div>'
+                            + '<div class="progressbar-label">' + value + '%</div>'
+                        + '</div>';
+        }
+    };
+    function search() {
+        var key = mini.get("key").getValue();
+        if (key == "") {
+            tree.clearFilter();
+        } else {
+            key = key.toLowerCase();
+            tree.filter(function (node) {
+                var text = node.Name ? node.Name.toLowerCase() : "";
+                if (text.indexOf(key) != -1) {
+                    return true;
+                }
+            });
+        }
+    }
+    function onKeyEnter(e) {
+        search();
+    }
+    function expandAll() {
+        tree.expandAll();
+    }
+    function collapseAll() {
+        tree.collapseAll();
+    }
+</script>
+    }

@@ -1,0 +1,232 @@
+﻿@{
+    Layout = Layout = "~/Views/Shared/_Layout.cshtml"; ;
+}
+<script src="/Scripts/miniui/CopyExcel.js" type="text/javascript"></script>
+<style type="text/css">
+    .asLabel .mini-textbox-border,
+    .asLabel .mini-textbox-input,
+    .asLabel .mini-buttonedit-border,
+    .asLabel .mini-buttonedit-input,
+    .asLabel .mini-textboxlist-border {
+        border: 0;
+        background: none;
+        cursor: default;
+    }
+
+    .asLabel .mini-buttonedit-button,
+    .asLabel .mini-textboxlist-close {
+        display: none;
+    }
+
+    .asLabel .mini-textboxlist-item {
+        padding-right: 8px;
+    }
+</style>
+<div style="width:95%;">
+    <div class="mini-toolbar" style="border-bottom:0;padding:0px;">
+        <table style="width:100%;">
+            <tr>
+                <td>
+                    @*<a id="btnAdd" class="mini-button" iconCls="icon-add" onclick="add()">添加</a>*@
+                    <a id="btnRemove" class="mini-button" iconCls="icon-remove" onclick="remove()">移除</a>
+                    <a id="btnSave" class="mini-button" iconCls="icon-save" onclick="save()">保存</a>                   
+                    <a id="btnCancel" class="mini-button" iconCls="icon-reload" onclick="cancel()">初始化</a>
+                </td>
+                <td  align="right">
+                    考勤月份：<input id="strYmonth" class="mini-combobox" style="width:80px;" textField="sysvalue" valueField="sysvalue"
+                                url="/Common/GetMonths" value="" />
+                    所属公司：<input id="companyId" class="mini-combobox" style="width:120px;" textField="OrganizationName" valueField="OrganizationId" emptyText="请选择..."
+                                url="/Common/GetCompanys" value="" showNullItem="true" nullItemText="请选择..." onvaluechanged="onCompanyChanged" />
+                    <span class="separator"></span>
+                    所属部门：<input id="departmentId" class="mini-combobox" style="width:120px;" textField="OrganizationName" valueField="OrganizationId" emptyText="请选择..."
+                                value="" showNullItem="true" nullItemText="请选择..." />
+                    <span class="separator"></span>
+                    员工：<input id="employeeId" name="employeeId" class="mini-buttonedit" onbuttonclick="onButtonEdit" textName=""
+                              onvaluechanged="onEmployeeIdChanged" style="width:120px;"/>
+                    <input id="employeeName" name="employeeName" class="mini-textbox asLabel" readOnly="true" style="width:100px;" />
+                    <input name="cardNumber" id="cardNumber" class="mini-hidden"  />
+                    <input name="batchNo" id="batchNo" class="mini-hidden" />
+                    @*<a id="btnSearch" class="mini-button" onclick="search()">查询</a>*@
+                    @*<a id="btnImport" class="mini-button" onclick="initImport()">导入</a>*@
+                    <a id="btnExport" class="mini-button" iconCls="icon-download" onclick="exportExcel()">导出</a>
+                </td>
+            </tr>
+        </table>
+    </div>
+</div>
+
+<div id="datagrid1" class="mini-datagrid" style="width:95%;height:380px;"
+     allowRowSelect="true"multiSelect="true"  enableHotTrack="false"
+     allowCellEdit="true" allowCellSelect="true" cellEditAction="celldblclick" url="/Attendance/GetCardClicks">
+    <div property="columns">
+        <div type="checkcolumn"></div>
+        <div type="indexcolumn">No.</div>
+        <div field="companyId" width="100">公司编号<input property="editor" class="mini-textbox" style="width:100%;" /></div>
+        <div field="companyName" width="100">公司名称<input property="editor" class="mini-textbox" style="width:100%;" /></div>
+        <div field="empId" width="100">员工编号<input property="editor" class="mini-textbox" style="width:100%;" /></div>
+        <div field="empName" width="100">员工姓名<input property="editor" class="mini-textbox" style="width:100%;" /></div>
+        <div field="cardId" width="100">员工卡号<input property="editor" class="mini-textbox" style="width:100%;" /></div>
+        <div field="attDate" dateFormat="yyyy-MM-dd" width="100">考勤日期<input property="editor" class="mini-textbox" style="width:100%;" /></div>
+        <div field="at_login_time" width="100" dateFormat="HH:mm">上班打卡<input property="editor" class="mini-textbox" style="width:100%;" format="HH:mm"/></div>        
+        <div field="at_level_time" width="100" dateFormat="HH:mm">下班打卡<input property="editor" class="mini-textbox" style="width:100%;" format="HH:mm" /></div>        
+    </div>
+</div> 
+<script>
+   
+    mini.parse();
+    var grid = mini.get("datagrid1");
+    var data = [{}, {}, {}, {}, {}, {}, {}, {}, {}, {}];
+    grid.setData(data);
+    new CopyExcel(grid);        //Excel互操作插件
+
+    //设定默认选中月份
+    var yMonth = mini.get("strYmonth");
+    var myDate = new Date();
+    var intY = myDate.getFullYear();
+    var intM = myDate.getMonth() + 1;
+    var strYmonth = intY + "-" + intM;
+    if (intM < 10) { strYmonth = intY + "-0" + intM; }
+    yMonth.setValue(strYmonth);
+
+    //按钮
+    var btnR = mini.get("btnRemove");
+    var btnS = mini.get("btnSave");
+    var btnC = mini.get("btnCancel");
+    //设置按钮状态
+    setButtonState("");
+    function setButtonState(editFlag) {
+        if (editFlag == "1") {
+            //保存之后
+            btnR.disable();
+            btnS.disable();
+        }  else if (editFlag == "") {
+            //初始化
+            btnR.enable();
+            btnS.enable();
+        }
+    }
+    //选择员工按钮
+    function onButtonEdit(e) {
+        var btnEdit = this;
+        var lblName = mini.get("employeeName");
+        var cardNumber = mini.get("cardNumber");
+        var companyId = mini.get("companyId").value;
+        if (companyId == "") {
+            mini.alert("请先选择所属公司！");
+            return;
+        }
+        var departmentId = mini.get("departmentId").value;
+        mini.open({
+            url: "/Common/SelectEmployee?companyId=" + companyId + "&departmentId=" + departmentId,
+            title: "选择列表",
+            width: '60%',
+            height: '80%',
+            showMaxButton: true,
+            onload: function () {
+                var iframe = this.getIFrameEl();
+
+            },
+            ondestroy: function (action) {
+                if (action == "ok") {
+                    var iframe = this.getIFrameEl();
+                    var data = iframe.contentWindow.GetData();
+                    data = mini.clone(data);    //必须
+                    if (data) {
+                        btnEdit.setValue(data.employeeId);
+                        btnEdit.setText(data.employeeId);
+                        lblName.setValue(data.employeeName);
+                        lblName.setText(data.employeeName);
+                        cardNumber.setValue(data.ue_card_number);
+                    }
+                }
+
+            }
+        });
+
+    }
+    function initImport() {
+        var data = [{}, {}, {}, {}, {}, {}, {}, {}, {}, {}];
+        grid.setData(data);
+        setButtonState("");
+    }
+    //导出
+    function exportExcel() {
+        var strYmonth = mini.get("strYmonth").value;
+        var companyId = mini.get("companyId").value;
+        var empId = mini.get("employeeId").text;
+        window.location.href = "/Attendance/ExportFile?strMonth=" + strYmonth +
+                "&companyId=" + companyId + "&empId=" + empId;
+
+    }
+   
+    //----查询部分下拉框联动
+    var companyCmb = mini.get("companyId");
+    var deprtCmb = mini.get("departmentId");
+    //公司选择下拉框改变
+    function onCompanyChanged(e) {
+        var cmpId = companyCmb.getValue();
+        deprtCmb.setValue("");
+        var url = "/Common/GetDepartments?companyid=" + cmpId;
+        deprtCmb.setUrl(url);
+        deprtCmb.select(0);
+    }
+
+   
+    //保存
+    function save() {
+        saveGrid(grid, {
+            url: "/Attendance/SaveExcelCardClick",
+            callback: function (success, result) {
+                if (success == true) {
+                    mini.alert("保存成功！");
+                    var batchNo = mini.get("batchNo");
+                    batchNo.setValue(result.message);
+                    search();
+                } else {
+                    mini.alert(result.message);
+                }
+                return true;
+            }
+        });
+    }
+    //查询
+    function search() {
+        var strYmonth = mini.get("strYmonth").value;
+        var companyId = mini.get("companyId").value;
+        var empId = mini.get("employeeId").text;
+        var batchNo = mini.get("batchNo").value;
+        grid.load({ strMonth: strYmonth, companyId: companyId, employeeId: empId, batchNo: batchNo });
+        setButtonState("1");        
+    }
+    //取消
+    function cancel() {
+        initImport();
+    }
+    function remove() {
+        var rows = grid.getSelecteds();
+        if (rows.length > 0) {
+
+            grid.removeRows(rows, true);
+        }
+    }
+    //新建
+    function add() {
+        var empId = mini.get("employeeId").value;
+        var cardNumber = mini.get("cardNumber").value;
+        var newRow = { employee_id: empId, card_id: cardNumber, new_flag: "New" };
+        grid.addRow(newRow, 0);
+        grid.deselectAll();
+        grid.select(newRow);
+    }
+    function loading() {
+        mini.mask({
+            el: document.body,
+            cls: 'mini-mask-loading',
+            html: '加载中...'
+        });
+        setTimeout(function () {
+            mini.unmask(document.body);
+        }, 1000);
+    }
+
+</script>

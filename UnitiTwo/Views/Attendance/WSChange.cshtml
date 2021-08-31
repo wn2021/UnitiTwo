@@ -1,0 +1,355 @@
+﻿@{
+    Layout = Layout = "~/Views/Shared/_Layout.cshtml"; ;
+}
+
+<div style="width:100%;">
+    <table style="width:100%;table-layout:fixed;">
+        <tr style="width:90%;">
+            <td style="width:79%;">
+                <div title="调休计划" style="width:100%;height:350px;">
+                    <div style="width:100%;">
+                        <div class="mini-toolbar" style="border-bottom:0;padding:0px;">
+                            <table style="width:100%;">
+                                <tr>
+                                    <td style="width:100%;">
+                                        <a class="mini-button" iconCls="icon-add" onclick="add()">增加</a>
+                                        <a class="mini-button" iconCls="icon-cancel" onclick="cancel()">取消</a>
+                                        <a class="mini-button" iconCls="icon-save" onclick="save()">保存</a>
+                                    </td>
+                                    <td style="white-space:nowrap;">
+                                        日期范围：
+                                        <input id="beginDate" class="mini-datepicker" value="2010-01-01" style="width:100px;"dateFormat="yyyy-MM-dd"/>~ 
+                                        <input id="endDate" class="mini-datepicker" value="2010-01-01" style="width:100px;"dateFormat="yyyy-MM-dd"/>
+                                        <span class="separator"></span>
+                                        所属公司：<input id="e_companyId" class="mini-combobox" style="width:100px;" textField="OrganizationName" valueField="OrganizationId" emptyText="请选择..."
+                                                    url="/Common/GetCompanys" value="" showNullItem="true" nullItemText="请选择..." onvaluechanged="onCompanyChanged" />
+                                        <span class="separator"></span>
+                                        所属部门：<input id="e_departmentId" class="mini-combobox" style="width:100px;" textField="OrganizationName" valueField="OrganizationId" emptyText="请选择..."
+                                                    value="" showNullItem="true" nullItemText="请选择..." />
+                                        <span class="separator"></span>
+                                        <a class="mini-button" onclick="search()">查询</a>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                    <div id="datagrid1" class="mini-datagrid" style="width:100%;height:350px;"
+                         url="/Attendance/GetWSChanges" idField="wsc_id" sallowResize="true" pageSize="10" allowCellEdit="true" allowCellSelect="true"
+                         oncellbeginedit="OnCellBeginEdit" onselectionchanged="onSelectionChanged">
+                        <div property="columns">
+                            <div field="wsc_id" width="120px" headerAlign="center" allowSort="true" align="center" >计划编号</div>
+                            <div field="wsc_date_from" width="80px" headerAlign="center" allowSort="true" dateFormat="yyyy-MM-dd">
+                                开始日期
+                                <input property="editor" class="mini-datepicker" style="width:100%;" />
+                            </div>
+                            <div field="wsc_date_to" width="80px" headerAlign="center" allowSort="true" dateFormat="yyyy-MM-dd">
+                                结束日期
+                                <input property="editor" class="mini-datepicker" style="width:100%;" />
+                            </div>
+                            <div field="wsc_change_type" width="100px" headerAlign="center" allowSort="true" type="comboboxcolumn" autoShowPopup="true">
+                                调休类型
+                                <input property="editor" class="mini-combobox" style="width:100%;" url="/Common/GetSystemInfoList?sysid=3003"
+                                       textField="description" valueField="sysvalue" />
+                            </div>
+                            <div field="wsc_change_reason" width="100px" headerAlign="center" allowSort="true" type="comboboxcolumn" autoShowPopup="true">
+                                调休原因
+                                <input property="editor" class="mini-combobox" style="width:100%;" url="/Common/GetSystemInfoList?sysid=3004"
+                                       textField="description" valueField="sysvalue" />
+                            </div>
+                            <div field="wsc_range_type" width="90" headerAlign="center" allowSort="true" type="comboboxcolumn" autoShowPopup="true">
+                                调休范围
+                                <input property="editor" class="mini-combobox" style="width:100%;" url="/Common/GetSystemInfoList?sysid=3005"
+                                       textField="description" valueField="sysvalue" />
+                            </div>
+                            <div field="wsc_company_id" width="110" headerAlign="center" allowSort="true" type="comboboxcolumn" autoShowPopup="true">
+                                调休公司
+                                <input property="editor" class="mini-combobox" style="width:100%;" url="/Common/GetCompanys"
+                                       textField="OrganizationName" valueField="OrganizationId" />
+                            </div>
+                            <div field="wsc_salary_param" width="70" headerAlign="center" allowSort="true" align="right"
+                                 decimalPlaces="2" dataType="float" required="true">
+                                工资参数
+                                <input property="editor" class="mini-spinner" value="" style="width:100%;" />
+                            </div>
+                            <div field="wsc_remarks" width="200px" headerAlign="center" allowSort="true">
+                                详细原因
+                                <input property="editor" class="mini-textbox" />
+                            </div>
+                            <div name="action" width="40" headerAlign="center" align="center" renderer="onActionRenderer" cellStyle="padding:0;">#</div>
+                        </div>
+                    </div>
+                </div>
+            </td>
+            <td style="width:1%;"></td>
+            <td style="width:20%;">
+                <div title="调休范围" style="width:100%;height:350px;">
+                    <div style="width:100%;">
+                        <div class="mini-toolbar" style="border-bottom:0;padding:0px;">
+                            <table style="width:100%;">
+                                <tr>
+                                    <td style="width:50%;color:red;" align="center">调休范围：</td>
+                                    <td style="width:50%;" align="right">
+                                        <a class="mini-button" iconCls="icon-save" onclick="save_t()">保存</a>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                    <div id="datagrid2" class="mini-datagrid" style="width:100%;height:350px;"
+                         url="/Attendance/GetWSChangeTarfet" idField="wct_id"  allowCellEdit="true" allowCellSelect="true" multiSelect="true">
+                        <div property="columns">
+                            <div type="checkcolumn"></div>
+                            @*<div field="is_target" type="checkboxcolumn" trueValue="1" falseValue="0"width="20px"></div>*@
+                            <div field="wct_target_id" width="60px" headerAlign="center" allowSort="true">调休目标</div>
+                            <div field="wct_target_name" width="100px" headerAlign="center" allowSort="true">调休目标名称</div>
+
+                        </div>
+                    </div>
+                </div>
+            </td>
+
+        </tr>
+    </table>
+</div>
+
+<script>
+    mini.parse();
+    var grid = mini.get("datagrid1");
+    var grid_range = mini.get("datagrid2");
+    var today = new Date();
+    var nowMonth = today.getMonth(); //当前月 
+    var nowYear = today.getFullYear(); //当前年 
+    var beginDate = mini.get("beginDate");
+    var endDate = mini.get("endDate");
+    beginDate.setValue(new Date(nowYear, nowMonth, 1));
+    endDate.setValue(new Date(nowYear, nowMonth+1, 0));
+    grid.on("load", function () { grid.select(0) });
+    grid.load({ beginDate: beginDate.getFormValue(), endDate: endDate.getFormValue() });
+    
+    function OnCellBeginEdit(e) {
+        var record = e.record, field = e.field;
+        if (record.wsc_id && record.wsc_date_from <= today) {
+            if (field != "wsc_date_to" && field != "wsc_remarks") {
+                e.cancel = true;    //已生效的只能改结束日期和备注
+            }
+        }
+        if (field == "wsc_company_id") {
+            if (record.wsc_range_type != "2") {
+                e.cancel = true;    //调休范围是部门时才需要选择所属公司
+            }
+        }
+    }
+    grid.on("cellcommitedit", function (e) {
+        var record = e.record;
+        if (e.editor.getText) {
+            record.text = e.editor.getText();
+        } else {
+            record.text = e.value;
+        }
+        if (e.field == "wsc_range_type") {
+            //当调休范围不是部门时，清空调休公司
+            if (e.value !="2") {
+                //record.wsc_company_id = "";
+                grid.updateRow(record, { wsc_company_id: ""});
+            }
+        }
+    });
+    //grid.on("beforeload", function (e) {
+    //    if (grid.getChanges().length > 0) {
+    //        if (confirm("有增删改的数据未保存，是否取消本次操作？")) {
+    //            e.cancel = true;
+    //        }
+    //    }
+    //});
+
+    //查询部分下拉框联动
+    var companyCmb = mini.get("e_companyId");
+    var deprtCmb = mini.get("e_departmentId");
+    //公司选择下拉框改变
+    function onCompanyChanged(e) {
+        var cmpId = companyCmb.getValue();
+        deprtCmb.setValue("");
+        var url = "/Common/GetDepartments?companyid=" + cmpId;
+        deprtCmb.setUrl(url);
+        deprtCmb.select(0);
+    }
+
+    //查询
+    function search() {
+        var e_companyId = companyCmb.getValue();
+        var e_departmentId = deprtCmb.getValue();
+        var condition = { companyId: e_companyId, depId: e_departmentId, beginDate: beginDate.getFormValue(), endDate: endDate.getFormValue() };
+        grid.load(condition);
+
+    }
+    //增加
+    function add() {
+        var newRow = { wsc_date_from: today };
+        grid.addRow(newRow, 0);
+        grid.beginEditCell(newRow);
+    }
+    //取消
+    function cancel() {
+        if (grid.getChanges().length > 0) {
+            mini.confirm("有增删改的数据未保存，是否取消本次操作？", "确认", function (action) {
+                if (action == "ok") {
+                    e.cancel = true;
+                }
+            });
+        }
+        search();
+    }
+    //保存
+    function save() {
+        if (!checkBeforeSave()) {
+            return;
+        }
+        saveGrid(grid, {
+            url: "/Attendance/SaveWSChanges"
+        });
+        search();
+    }
+    function checkBeforeSave() {
+        var data = grid.getChanges();
+        for (var i = 0; i < data.length; i++) {
+            if (data[i].wsc_date_from == null) {
+                mini.alert("开始日期不能为空！");
+                return false;
+            }
+            //if (data[i].wsc_date_from < today) {
+            //    mini.alert("开始日期不能小于当前日期");
+            //    return false;
+            //}
+            if (data[i].wsc_date_to == null) {
+                mini.alert("开始日期不能为空！");
+                return false;
+            }
+            //if (data[i].wsc_date_to < today) {
+            //    mini.alert("结束日期不能小于当前日期");
+            //    return false;
+            //}
+            if (data[i].wsc_date_to < data[i].wsc_date_from) {
+                mini.alert("结束日期不能小于开始日期");
+                return false;
+            }
+            if (data[i].wsc_change_type == null) {
+                mini.alert("调休类型不能为空！");
+                return false;
+            }
+            if (data[i].wsc_change_reason == null) {
+                mini.alert("调休原因不能为空！");
+                return false;
+            }
+            if (data[i].wsc_range_type == null) {
+                mini.alert("调休范围不能为空！");
+                return false;
+            } else if (data[i].wsc_range_type == "2") {
+                if (data[i].wsc_company_id == null || data[i].wsc_company_id=="") {
+                    mini.alert("调休范围为部门时，调休公司不能为空！");
+                    return false;
+                }
+            }
+            if (data[i].wsc_salary_param == null) {
+                mini.alert("工资参数不能为空！");
+                return false;
+            }
+        }
+        return true;
+    }
+    //行选中
+    function onSelectionChanged(e) {
+        var grid = e.sender;
+        var record = grid.getSelected();
+        if (record) {
+            grid_range.load({ wsChangeId: record.wsc_id, targetype: record.wsc_range_type, wsCompanyId: record.wsc_company_id }, function (e) {
+                var rows = grid_range.findRows(function (row) {
+                    if (row.is_target == '1') {
+                        return true;
+                    }
+                    return false;
+                });  //根据你的条件获取对应的行
+                grid_range.selects(rows);
+            });
+        }
+    }
+    function OnCellCommitEdit(e) {
+        var grid = e.sender;
+        var record = e.record;
+        var field = e.field, value = e.value;
+        if (field == "wsc_range_type") {
+            grid_range.load({ wsChangeId: record.wsc_id, targetype: value }, function (e) {
+                var rows = grid_range.findRows(function (row) {
+                    if (row.is_target == '1') {
+                        return true;
+                    }
+                    return false;
+                });  //根据你的条件获取对应的行
+                grid_range.selects(rows);
+            });
+        }
+    }
+    function onActionRenderer(e) {
+        var grid = e.sender;
+        var record = e.record;
+        var uid = record.wsc_id;
+        var rowIndex = e.rowIndex;
+
+        var s = '<a class="Delete_Button" href="javascript:delRow(\'' + uid + '\')">删除</a>';
+
+        return s;
+    }
+    function delRow(row_uid) {
+        mini.confirm("确定删除此记录？", "确认删除", function (action) {
+            if (action == "ok") {
+                grid.loading("删除中，请稍后......");
+                $.ajax({
+                    url: "/Attendance/DelWSChange?id=" + row_uid,
+                    type: "post",
+                    success: function (text) {
+                        grid.reload();
+                    },
+                    error: function () {
+                    }
+                });
+            }
+        });
+    }
+    
+
+    //function save_t() {
+    //    saveGrid(grid_range, {
+    //        url: "/Attendance/SaveWSCTarget"
+    //    });
+    //}
+    function save_t() {
+        var rows = grid_range.getSelecteds();
+        if (rows.length > 0) {
+            var ids = [];
+            for (var i = 0, l = rows.length; i < l; i++) {
+                var r = rows[i];
+                ids.push(r.wct_target_id);
+            }
+            var targetIds = ids.join(',');
+            var grow = grid.getSelected();
+            var wsId = grow.wsc_id;
+            grid_range.loading("操作中，请稍后......");
+            $.ajax({
+                url: "/Attendance/SaveWSCTarget?wsId=" + wsId + "&targetIds=" + targetIds,
+                type: "post",
+                success: function (text) {
+                    if (text.success) {
+                        mini.alert("保存成功！");
+                    } else {
+                        mini.alert(text.message);
+                    }
+                    grid.reload();
+                },
+                error: function () {
+                }
+            });
+
+        } else {
+            mini.alert("请为该调休计划至少选中一个范围。");
+        }
+    }
+</script>

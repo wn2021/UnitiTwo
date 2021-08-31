@@ -1,0 +1,307 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>BFC.FRM.Business</name>
+    </assembly>
+    <members>
+        <member name="M:BFC.FRM.Business.BLSecurity.CheckUserAuthorised(System.String[],BFC.FRM.Model.IUserLoginInfo)">
+            <summary>
+            检查用户是否拥有指定的一批特定权限。
+            返回拥有的权限数组。
+            </summary>
+            <param name="functionID">需要检查的一批权限数组</param>
+            <param name="loginInfo">登录用户信息对象。如果未登录，则传递 null 。</param>
+            <returns>拥有的权限数组。</returns>
+        </member>
+        <member name="M:BFC.FRM.Business.BLSecurity.CheckUserAuthorised(System.String,BFC.FRM.Model.IUserLoginInfo)">
+            <summary>
+            检查用户是否拥有特定权限。
+            </summary>
+            <param name="functionID">需要检查的权限。</param>
+            <param name="loginInfo">登录用户信息对象。如果未登录，则传递 null 。</param>
+            <returns></returns>
+        </member>
+        <member name="M:BFC.FRM.Business.BLSecurity.GetUserMenuTreeViewData(System.String)">
+            <summary>
+            取得指定用户可访问的菜单及层次关系。
+            </summary>
+            <param name="userID">用户编号。</param>
+            <returns></returns>
+        </member>
+        <member name="M:BFC.FRM.Business.BLSecurity.GetAllMenuTreeViewData">
+            <summary>
+            取得所有的菜单及层次关系。
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:BFC.FRM.Business.BLSecurity.GetFunctionTreeViewData(System.Int32)">
+            <summary>
+            取得所有的功能及层次关系。并根据指定权限组在 IsAuthorized 字段上标记该权限组所拥有的权限。
+            </summary>
+            <param name="authorityGroupID">需要标记拥有权限的权限组编号。</param>
+            <returns></returns>
+        </member>
+        <member name="M:BFC.FRM.Business.BLSecurity.GetFunctionTreeViewData">
+            <summary>
+            取得所有的功能及层次关系。
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:BFC.FRM.Business.BLSecurity.GetUserName(System.String)">
+            <summary>
+            根据用户编号取得用户名称。
+            </summary>
+            <param name="userID"></param>
+            <returns></returns>
+        </member>
+        <member name="M:BFC.FRM.Business.BLSystemInfo.GetSysValue(System.Int32,System.Int32)">
+            <summary>
+            
+            </summary>
+            <param name="sysID"></param>
+            <param name="sysSubID"></param>
+            <returns></returns>
+        </member>
+        <member name="M:BFC.FRM.Business.BLSystemInfo.GetSysValue2(System.Int32,System.Int32)">
+            <summary>
+            取得系统信息 SysValue2 的值。
+            </summary>
+            <param name="sysID"></param>
+            <param name="sysSubID"></param>
+            <returns></returns>
+        </member>
+        <member name="M:BFC.FRM.Business.BLSystemInfo.GetSysValue2(System.Int32,System.String)">
+            <summary>
+            取得系统信息 SysValue2 的值。
+            </summary>
+            <param name="sysID"></param>
+            <param name="sysValue"></param>
+            <returns></returns>
+        </member>
+        <member name="M:BFC.FRM.Business.BLSystemInfo.GetSysValue(System.Int32,System.String)">
+            <summary>
+            使用当前区域名称找到指定 SysValue 值。
+            </summary>
+            <param name="sysID"></param>
+            <param name="name"></param>
+            <returns></returns>
+        </member>
+        <member name="M:BFC.FRM.Business.BLSystemInfo.GetSysValue(System.Int32,System.String,System.String)">
+            <summary>
+            使用指定的区域名称找到指定 SysValue 值。
+            </summary>
+            <param name="sysID"></param>
+            <param name="name"></param>
+            <param name="cultureName"></param>
+            <returns></returns>
+        </member>
+        <member name="M:BFC.FRM.Business.BLSystemInfo.GetSysNames(System.Int32,System.String)">
+            <summary>
+             使用指定 SysValue 取得对应当前区域的 SysName 数组。
+            </summary>
+            <param name="sysID"></param>
+            <param name="sysValue"></param>
+            <returns></returns>
+        </member>
+        <member name="M:BFC.FRM.Business.BLSystemInfo.GetSysNames(System.Int32,System.String,System.String)">
+            <summary>
+            
+            </summary>
+            <param name="sysID"></param>
+            <param name="sysValue"></param>
+            <param name="cultureName"></param>
+            <returns></returns>
+        </member>
+        <member name="M:BFC.FRM.Business.BLSystemInfo.GetSysName(System.Int32,System.String)">
+            <summary>
+            
+            </summary>
+            <param name="sysID"></param>
+            <param name="sysValue"></param>
+            <returns></returns>
+        </member>
+        <member name="M:BFC.FRM.Business.BLSystemInfo.GetSysName(System.Int32,System.String,System.String)">
+            <summary>
+            
+            </summary>
+            <param name="sysID"></param>
+            <param name="sysValue"></param>
+            <param name="cultureName"></param>
+            <returns></returns>
+        </member>
+        <member name="M:BFC.FRM.Business.BLSystemInfo.GetSysName(System.Int32,System.Int32)">
+            <summary>
+            取得指定系统信息项的对应于当前区域的 SysName 。
+            </summary>
+            <param name="sysID"></param>
+            <param name="sysSubID"></param>
+            <returns></returns>
+        </member>
+        <member name="M:BFC.FRM.Business.BLSystemInfo.GetSysName(System.Int32,System.Int32,System.String)">
+            <summary>
+            
+            </summary>
+            <param name="sysID"></param>
+            <param name="sysSubID"></param>
+            <param name="cultureName"></param>
+            <returns></returns>
+        </member>
+        <member name="M:BFC.FRM.Business.BLSystemInfo.GetSysIntValue(System.Int32,System.Int32)">
+            <summary>
+            
+            </summary>
+            <param name="sysID"></param>
+            <param name="sysSubID"></param>
+            <returns></returns>
+        </member>
+        <member name="M:BFC.FRM.Business.BLSystemInfo.GetSysBooleanValue(System.Int32,System.Int32)">
+            <summary>
+            
+            </summary>
+            <param name="sysID"></param>
+            <param name="sysSubID"></param>
+            <returns></returns>
+        </member>
+        <member name="M:BFC.FRM.Business.BLSystemInfo.GetSysDecimalValue(System.Int32,System.Int32)">
+            <summary>
+            
+            </summary>
+            <param name="sysID"></param>
+            <param name="sysSubID"></param>
+            <returns></returns>
+        </member>
+        <member name="M:BFC.FRM.Business.BLSystemInfo.GetSysDateTimeValue(System.Int32,System.Int32)">
+            <summary>
+            
+            </summary>
+            <param name="sysID"></param>
+            <param name="sysSubID"></param>
+            <returns></returns>
+        </member>
+        <member name="M:BFC.FRM.Business.BLSystemInfo.GetSystemInfo(System.Int32)">
+            <summary>
+            
+            </summary>
+            <param name="sysID"></param>
+            <returns></returns>
+        </member>
+        <member name="M:BFC.FRM.Business.BLSystemInfo.GetSystemInfo(System.Int32,System.String)">
+            <summary>
+            
+            </summary>
+            <param name="sysID"></param>
+            <param name="cultureName"></param>
+            <returns></returns>
+        </member>
+        <member name="M:BFC.FRM.Business.BLSystemInfo.GetSystemInfoRow(System.Int32,System.Int32)">
+            <summary>
+            
+            </summary>
+            <param name="sysID"></param>
+            <param name="sysSubID"></param>
+            <returns></returns>
+        </member>
+        <member name="M:BFC.FRM.Business.BLSystemInfo.GetSystemInfoRow(System.Int32,System.Int32,System.String)">
+            <summary>
+            
+            </summary>
+            <param name="sysID"></param>
+            <param name="sysSubID"></param>
+            <param name="cultureName"></param>
+            <returns></returns>
+        </member>
+        <member name="M:BFC.FRM.Business.BLSystemInfo.GetSystemInfoRow(System.Int32,System.String,System.String)">
+            <summary>
+            
+            </summary>
+            <param name="sysID"></param>
+            <param name="sysValue"></param>
+            <param name="cultureName"></param>
+            <returns></returns>
+        </member>
+        <member name="M:BFC.FRM.Business.BLSystemInfo.SetSysInfo(System.Int32,System.String,System.String,System.String,System.String)">
+            <summary>
+            设置系统信息。
+            </summary>
+            <param name="sysID"></param>
+            <param name="sysValue"></param>
+            <param name="sysValue2"></param>
+            <param name="name"></param>
+            <param name="cultureName"></param>
+        </member>
+        <member name="M:BFC.FRM.Business.BLSystemInfo.SetSysInfo(System.Int32,System.Int32,System.String,System.String,System.String,System.String)">
+            <summary>
+            设置系统信息。
+            </summary>
+            <param name="sysID"></param>
+            <param name="sysSubID"></param>
+            <param name="sysValue"></param>
+            <param name="sysValue2"></param>
+            <param name="name"></param>
+            <param name="cultureName"></param>
+        </member>
+        <member name="M:BFC.FRM.Business.FrameworkBusinessConfig.ReadAppSetting(System.String)">
+            <summary>
+            读取定义在 BFC.FRM.business\appSettings 中的设置属性值。
+            </summary>
+            <param name="key"></param>
+            <returns></returns>
+        </member>
+        <member name="M:BFC.FRM.Business.FrameworkBusinessConfig.GetConfigValue(System.String,System.String)">
+            <summary>
+            获取 BFC.FRM.business 节点下的指定子节点下的指定属性值。
+            </summary>
+            <param name="nodeName"></param>
+            <param name="attributeName"></param>
+            <returns></returns>
+        </member>
+        <member name="M:BFC.FRM.Business.InfraBusinessBase.ResetThreadData">
+            <summary>
+            重置并清理当前线程的相关数据。
+            </summary>
+        </member>
+        <member name="T:BFC.FRM.Business.BLSystemInfoExt">
+            <summary>
+            提供获取 FRM_SYSTEMINFO 数据的 BL 类。从 BLSystemInfo 继承。
+            增加了 Modal Class 的数据获取或存储的功能。
+            要使用本类型对象，必须在 BFC.FRM.config 的 idlsysteminfo 节点的 type 属性设置为实现了 IDLSystemInfoExt 接口的类型。
+            </summary>
+        </member>
+        <member name="M:BFC.FRM.Business.BLSystemInfoExt.GetSystemInfoList(System.Int32,System.String)">
+            <summary>
+            使用指定的区域语言获取 FRM_SYSTEMINFO 的两个值和名称的列表数据。
+            </summary>
+            <param name="sysID"></param>
+            <param name="cultureName">要获取名称列对应的区域语言，传递空则默认获取当前语言。</param>
+            <returns>如果没有数据则返回长度为 0 的 List 对象。 </returns>
+        </member>
+        <member name="M:BFC.FRM.Business.BLSystemInfoExt.GetSystemInfoList(System.Int32,System.String,System.String)">
+            <summary>
+            使用指定的区域语言获取 FRM_SYSTEMINFO 的所有列的列表数据（名称列则只返回指定区域语言的列）。
+            </summary>
+            <param name="sysID"></param>
+            <param name="sysValue"></param>
+            <param name="cultureName">要获取名称列对应的区域语言，传递空则默认获取当前语言。</param>
+            <returns>如果没有数据则返回长度为 0 的 List 对象。 </returns>
+        </member>
+        <member name="M:BFC.FRM.Business.BLSystemInfoExt.GetSystemInfoModel(System.Int32,System.Int32,System.String)">
+            <summary>
+            使用指定的区域语言获取 FRM_SYSTEMINFO 一行数据。
+            </summary>
+            <param name="sysID"></param>
+            <param name="sysSubID"></param>
+            <param name="cultureName">要获取名称列对应的区域语言，传递空则默认获取当前语言。</param>
+            <returns>如果没有数据则返回 null。 </returns>
+        </member>
+        <member name="M:BFC.FRM.Business.BLSystemInfoExt.GetSystemInfoModel(System.Int32,System.String,System.String)">
+            <summary>
+            通过 SysID 和 SysValue 以及使用指定的区域语言获取 FRM_SYSTEMINFO 一行数据。
+            如果获取到多行数据则只返回第一行。
+            </summary>
+            <param name="sysID"></param>
+            <param name="sysValue"></param>
+            <param name="cultureName">要获取名称列对应的区域语言，传递空则默认获取当前语言。</param>
+            <returns>如果没有数据则返回 null。 </returns>
+        </member>
+    </members>
+</doc>

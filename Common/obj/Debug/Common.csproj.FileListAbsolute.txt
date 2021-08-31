@@ -1,0 +1,8 @@
+D:\Learn\miniUI.NET\UnitiTwo\Common\bin\Debug\Common.dll
+D:\Learn\miniUI.NET\UnitiTwo\Common\bin\Debug\Common.pdb
+D:\Learn\miniUI.NET\UnitiTwo\Common\obj\Debug\Common.dll
+D:\Learn\miniUI.NET\UnitiTwo\Common\obj\Debug\Common.pdb
+D:\Learn\miniUI.NET\UnitiTwo\Common\bin\Debug\NPOI.dll
+D:\Learn\miniUI.NET\UnitiTwo\Common\bin\Debug\ICSharpCode.SharpZipLib.dll
+D:\Learn\miniUI.NET\UnitiTwo\Common\bin\Debug\NPOI.xml
+D:\Learn\miniUI.NET\UnitiTwo\Common\obj\Debug\Common.csprojResolveAssemblyReference.cache

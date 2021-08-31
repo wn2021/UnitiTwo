@@ -1,0 +1,943 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>BFC.FRM.Global</name>
+    </assembly>
+    <members>
+        <member name="T:BFC.FRM.Global.AppEnvironment">
+            <summary>
+            系统框架全局类。
+            </summary>
+        </member>
+        <member name="M:BFC.FRM.Global.AppEnvironment.ReadAppSetting(System.String)">
+            <summary>
+            读取定义在 BFC.FRM\appSettings 中的设置属性值。
+            </summary>
+            <param name="key"></param>
+            <returns></returns>
+        </member>
+        <member name="M:BFC.FRM.Global.AppEnvironment.GetConfigValue(System.String,System.String)">
+            <summary>
+            获取 BFC.FRM 节点下的指定子节点下的指定属性值。
+            </summary>
+            <param name="nodeName"></param>
+            <param name="attributeName"></param>
+            <returns></returns>
+        </member>
+        <member name="P:BFC.FRM.Global.AppEnvironment.LocalizableSupportEnabled">
+            <summary>
+            取得当前系统是否使用本地化功能。
+            </summary>
+        </member>
+        <member name="M:BFC.FRM.Global.AppEnvironment.InitLocalizableSupportType">
+            <summary>
+            取得当前系统使用本地化功能支持类型：Xml 或 Binary。
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="P:BFC.FRM.Global.AppEnvironment.LocalizableSupportType">
+            <summary>
+            取得系统区域化资源类型（Xml 或 Binary ）。
+            </summary>
+        </member>
+        <member name="P:BFC.FRM.Global.AppEnvironment.DefaultCultureName">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:BFC.FRM.Global.AppEnvironment.ResourcesList">
+            <summary>
+            取得可供使用的资源列表。
+            </summary>
+        </member>
+        <member name="M:BFC.FRM.Global.AppEnvironment.CheckUICulture(System.String)">
+            <summary>
+            检查指定的 UICulture 是否在允许的资源列表中。
+            </summary>
+            <param name="cultureName"></param>
+            <returns></returns>
+        </member>
+        <member name="P:BFC.FRM.Global.AppEnvironment.FormatCultureInfo">
+            <summary>
+            获取当前系统当前线程区域的数字时间日期等格式的区域化信息。
+            </summary>
+        </member>
+        <member name="P:BFC.FRM.Global.AppEnvironment.SmtpServerSetting">
+            <summary>
+            获取或设置 Smtp 服务器设置。
+            </summary>
+        </member>
+        <member name="P:BFC.FRM.Global.AppEnvironment.PopServerSetting">
+            <summary>
+            获取或设置 POP 服务器设置。
+            </summary>
+        </member>
+        <member name="P:BFC.FRM.Global.AppEnvironment.AppBaseDirectory">
+            <summary>
+            取得当前应用程序域的根目录。（结尾不含"\"）
+            </summary>
+        </member>
+        <member name="P:BFC.FRM.Global.AppEnvironment.UserDataPath">
+            <summary>
+            返回取得用户文件夹基本路径，末尾已去掉“\”。
+            </summary>
+        </member>
+        <member name="P:BFC.FRM.Global.AppEnvironment.FileUploadBasePath">
+            <summary>
+            上传文件基本路径。如果是物理路径则转换为完整的绝对路径，末尾不含"\"。
+            可以配置为 URL 完整路径。
+            </summary>
+        </member>
+        <member name="P:BFC.FRM.Global.AppEnvironment.TemplateFilePath">
+            <summary>
+            模板文件路径。末尾不含"\"
+            </summary>
+        </member>
+        <member name="P:BFC.FRM.Global.AppEnvironment.TempFilePath">
+            <summary>
+            临时文件路径，末尾不含“\”
+            </summary>
+        </member>
+        <member name="M:BFC.FRM.Global.AppEnvironment.GetTempFile">
+            <summary>
+            取得一个随机的临时文件，扩展名为“.tmp”。
+            </summary>
+            <returns>返回一个临时文件完全路径。</returns>
+        </member>
+        <member name="M:BFC.FRM.Global.AppEnvironment.GetTempFile(System.String)">
+            <summary>
+            根据指定的文件名取得临时文件完整路径。
+            </summary>
+            <param name="fileName">临时文件使用的文件名。
+            如果参数值中包含扩展名，则使用该扩展名。
+            否则使用“.tmp”作为扩展名。
+            格式如下：
+            只提供扩展名：.XXX
+            提供带扩展名的文件名：FileName.XXX
+            仅提供不含扩展名的文件名：FileName
+            空值。此时返回以“.tmp”作为扩展名的随机文件名。
+            </param>
+            <returns>返回一个临时文件完全路径。</returns>
+        </member>
+        <member name="M:BFC.FRM.Global.AppEnvironment.GetTempFile(System.String,System.String)">
+            <summary>
+            在指定的物理路径下，根据指定的文件名取得临时文件完整路径。
+            </summary>
+            <param name="path">指定的物理路径。
+            </param>
+            <param name="fileName">临时文件使用的文件名。
+            如果参数值中包含扩展名，则使用该扩展名。
+            否则使用“.tmp”作为扩展名。
+            格式如下：
+            只提供扩展名：.XXX
+            提供带扩展名的文件名：FileName.XXX
+            仅提供不含扩展名的文件名：FileName
+            空值。此时返回以“.tmp”作为扩展名的随机文件名。
+            </param>
+            <returns>返回一个临时文件完全路径。</returns>
+        </member>
+        <member name="F:BFC.FRM.Global.AppEnvironment._currentAppData">
+            <summary>
+            Windows 应用程序时存储的全局数据，所有线程共享。
+            </summary>
+        </member>
+        <member name="F:BFC.FRM.Global.AppEnvironment._appType">
+            <summary>
+            当前应用程序类型。
+            </summary>
+        </member>
+        <member name="P:BFC.FRM.Global.AppEnvironment.CurrentThreadData">
+            <summary>
+            获取当前线程数据对象。
+            对于WEB应用程序，如果在应用程序中创建了新线程，请在新线程中对其进行初始化，否则无法获取数据。
+            </summary>
+        </member>
+        <member name="M:BFC.FRM.Global.AppEnvironment.InitializeFramework">
+            <summary>
+            程序启动，初始化 Framework，应用程序类型默认为 Web。
+            </summary>
+        </member>
+        <member name="M:BFC.FRM.Global.AppEnvironment.InitializeFramework(BFC.FRM.Global.ApplicationType)">
+            <summary>
+            程序启动，通过指定应用程序类型初始化 Framework。
+            </summary>
+        </member>
+        <member name="M:BFC.FRM.Global.AppEnvironment.ContainsCommandArg(System.String)">
+            <summary>
+            检查启动当前进程的命令行中是否存在指定的参数。(不区分大小写）
+            </summary>
+            <param name="arg">需要检查的参数。</param>
+            <returns>如果存在则返回 true，否则返回 false。</returns>
+        </member>
+        <member name="T:BFC.FRM.Global.ApplicationType">
+            <summary>
+            应用程序类型
+            </summary>
+        </member>
+        <member name="F:BFC.FRM.Global.ApplicationType.Web">
+            <summary>
+            Web 应用程序。
+            </summary>
+        </member>
+        <member name="F:BFC.FRM.Global.ApplicationType.Windows">
+            <summary>
+            Windows 应用程序。
+            </summary>
+        </member>
+        <member name="T:BFC.FRM.Global.AppSysData">
+            <summary>
+            系统框架数据集合，不要更改里面的数据。
+            </summary>
+        </member>
+        <member name="P:BFC.FRM.Global.AppSysData.SystemFunctions">
+            <summary>
+            取得管理模块所有的功能。
+            </summary>
+        </member>
+        <member name="M:BFC.FRM.Global.AppSysData.FindFunctionData(System.String)">
+            <summary>
+            根据 FunctionID 取得指定的 Function 数据行。
+            </summary>
+            <param name="functionID"></param>
+            <returns></returns>
+        </member>
+        <member name="M:BFC.FRM.Global.AppSysData.FindFunctionsByFilePath(System.String)">
+            <summary>
+            通过文件路径（不含应用程序路径）查找符合条件的 Function 行对象。
+            </summary>
+            <param name="filePathWithoutApplicationPath"></param>
+            <returns></returns>
+        </member>
+        <member name="M:BFC.FRM.Global.AppSysData.GetSystemFunctionAuthorized(System.String)">
+            <summary>
+            检查指定的功能是否需要明确授权访问。
+            </summary>
+            <param name="functionID"></param>
+            <returns>如果 functionID 不存在返回 null。否则返回实际值。</returns>
+        </member>
+        <member name="P:BFC.FRM.Global.AppSysData.SystemFreeFunctions">
+            <summary>
+            取得管理模块中无需登录就可访问的功能模块。
+            </summary>
+        </member>
+        <member name="M:BFC.FRM.Global.AppSysData.CheckIsFreeFunction(System.String)">
+            <summary>
+            检查指定的功能模块是否不需要授权就能访问。
+            </summary>
+            <param name="functionID"></param>
+            <returns></returns>
+        </member>
+        <member name="P:BFC.FRM.Global.AppSysData.SystemDefaultFunctionPageSize">
+            <summary>
+            定义在系统信息表中后台管理模块中各个查询页面的各自的 PageSize 缺省值。
+            </summary>
+        </member>
+        <member name="P:BFC.FRM.Global.AppSysData.SystemDefaultPageSize">
+            <summary>
+            获取或设置在系统信息表中后台管理模块查询页面的 PageSize 缺省值。
+            </summary>
+        </member>
+        <member name="M:BFC.FRM.Global.AppSysData.GetFunctionPageSize(System.String)">
+            <summary>
+            取得后台管理模块指定 FunctionID 的 PageSize，如果未找到则返回缺省值（AppGlobal.SystemDefaultPageSize）。
+            </summary>
+            <param name="functionID"></param>
+            <returns></returns>
+        </member>
+        <member name="M:BFC.FRM.Global.AppSysData.GetFunctionName(System.String)">
+            <summary>
+            取得管理模块中指定功能的名称。
+            </summary>
+            <param name="functionID"></param>
+            <returns></returns>
+        </member>
+        <member name="M:BFC.FRM.Global.AppSysData.GetFunctionOtherInfo(System.String)">
+            <summary>
+            取得管理模块中指定功能的其他信息。
+            </summary>
+            <param name="functionID"></param>
+            <returns></returns>
+        </member>
+        <member name="M:BFC.FRM.Global.AppSysData.GetFunctionTitle(System.String)">
+            <summary>
+            取得管理模块中指定功能的标题。
+            </summary>
+            <param name="functionID"></param>
+            <returns></returns>
+        </member>
+        <member name="M:BFC.FRM.Global.FrameworkConfig.ReadAppSetting(System.String,System.String)">
+            <summary>
+            读取定义在【指定的程序集的对应默认节点】\appSettings 中的设置属性值。
+            </summary>
+            <param name="assemblyDefaultNodeName">指定的程序集的对应默认节点名称。</param>
+            <param name="attribute"></param>
+            <returns></returns>
+        </member>
+        <member name="M:BFC.FRM.Global.FrameworkConfig.ReadAssemblySetting(System.String,System.String,System.String)">
+            <summary>
+            读取指定的程序集下的相应节点设置属性值。
+            </summary>
+            <param name="assemblyDefaultNodeName">指定的程序集的对应默认节点名称。</param>
+            <param name="key">该程序集配置节点下指定的子节点名称。</param>
+            <param name="attribute">获取子节点中指定的属性名称。</param>
+            <returns></returns>
+        </member>
+        <member name="M:BFC.FRM.Global.IDLAppSysData.InitSystemFunctions">
+            <summary>
+            取得管理模块所有的功能。
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:BFC.FRM.Global.IDLAppSysData.InitSystemFreeFunctions">
+            <summary>
+            取得管理模块中无需登录就可访问的功能模块。
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:BFC.FRM.Global.IDLAppSysData.InitSystemDefaultFunctionPageSize">
+            <summary>
+            定义在系统信息表中后台管理模块中各个查询页面的各自的 PageSize 缺省值。
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="T:BFC.FRM.Global.LocalizableSupportAttribute">
+            <summary>
+            用于标识某个类是否需要支持区域化。
+            </summary>
+        </member>
+        <member name="M:BFC.FRM.Global.LocalizableSupportAttribute.#ctor(System.Boolean)">
+            <summary>
+            标识某个类是否需要支持区域化。
+            </summary>
+            <param name="localizable">是否需要支持区域化。</param>
+        </member>
+        <member name="P:BFC.FRM.Global.LocalizableSupportAttribute.LocalizableSupport">
+            <summary>
+            是否需要支持区域化。默认值为 true。
+            </summary>
+        </member>
+        <member name="T:BFC.FRM.Global.LocalizableResourceFileType">
+            <summary>
+            区域化资源类型。
+            </summary>
+        </member>
+        <member name="F:BFC.FRM.Global.LocalizableResourceFileType.Xml">
+            <summary>
+            XML 类型，支持嵌入式资源发布，也支持作为源文件内容发布。
+            </summary>
+        </member>
+        <member name="F:BFC.FRM.Global.LocalizableResourceFileType.Binary">
+            <summary>
+            二进制类型，支持嵌入式资源发布。
+            </summary>
+        </member>
+        <member name="F:BFC.FRM.Global.LocalizableResourceFileType.EmbXml">
+            <summary>
+            XML 类型，支持嵌入式资源发布。
+            </summary>
+        </member>
+        <member name="T:BFC.FRM.Global.LocalizableSupportBase">
+            <summary>
+            本地化支持（非UI层使用）。
+            </summary>
+        </member>
+        <member name="P:BFC.FRM.Global.LocalizableSupportBase.LocalizableSupport">
+            <summary>
+            获取提供本地化资源访问的对象。
+            </summary>
+        </member>
+        <member name="M:BFC.FRM.Global.LocalizableSupportBase.GetResourceString(System.String,System.Object[])">
+            <summary>
+            取得字符串类型的资源。
+            </summary>
+            <param name="name"></param>
+            <param name="args"></param>
+            <returns></returns>
+        </member>
+        <member name="M:BFC.FRM.Global.LocalizableSupportBase.GetResourceObject(System.String)">
+            <summary>
+            取得 object 类型的资源。
+            </summary>
+            <param name="name"></param>
+            <returns></returns>
+        </member>
+        <member name="P:BFC.FRM.Global.LocalizableSupportBase.UICultureName">
+            <summary>
+            取得当前线程 UI 区域 ID。
+            </summary>
+        </member>
+        <member name="T:BFC.FRM.Global.ContextBoundLocalizableSupportBase">
+            <summary>
+            本地化支持（非UI层使用）。
+            </summary>
+        </member>
+        <member name="P:BFC.FRM.Global.ContextBoundLocalizableSupportBase.LocalizableSupport">
+            <summary>
+            获取提供本地化资源访问的对象。
+            </summary>
+        </member>
+        <member name="M:BFC.FRM.Global.ContextBoundLocalizableSupportBase.GetResourceString(System.String,System.Object[])">
+            <summary>
+            取得字符串类型的资源。
+            </summary>
+            <param name="name"></param>
+            <param name="args"></param>
+            <returns></returns>
+        </member>
+        <member name="M:BFC.FRM.Global.ContextBoundLocalizableSupportBase.GetResourceObject(System.String)">
+            <summary>
+            取得 object 类型的资源。
+            </summary>
+            <param name="name"></param>
+            <returns></returns>
+        </member>
+        <member name="P:BFC.FRM.Global.ContextBoundLocalizableSupportBase.UICultureName">
+            <summary>
+            取得当前线程 UI 区域 ID。
+            </summary>
+        </member>
+        <member name="T:BFC.FRM.Global.Model.UploadFile">
+            <summary>
+            类名：上传文件类
+            </summary>
+        </member>
+        <member name="T:BFC.FRM.Global.Model.UploadFile.FileStatus">
+            <summary>
+            文件操作状态
+            </summary>
+        </member>
+        <member name="F:BFC.FRM.Global.Model.UploadFile.FileStatus.ADD_NEW">
+            <summary>
+            文件上传到临时文件成功 
+            等待文件移到正式目录下 
+            并且等待信息记录入库
+            </summary>
+        </member>
+        <member name="F:BFC.FRM.Global.Model.UploadFile.FileStatus.DELETE">
+            <summary>
+            文件已经在正式目录下 
+            数据库中也有相应记录
+            等待数据库记录移除
+            </summary>
+        </member>
+        <member name="F:BFC.FRM.Global.Model.UploadFile.FileStatus.MAINTAIN">
+            <summary>
+            文件在正式目录
+            数据库中有记录但是文件不改变
+            </summary>
+        </member>
+        <member name="P:BFC.FRM.Global.Model.UploadFile.FileKey">
+            <summary>
+            能确定文件唯一性key key1,key2,key3
+            </summary>
+        </member>
+        <member name="P:BFC.FRM.Global.Model.UploadFile.TempKey">
+            <summary>
+            确定文件唯一性key (服务器文件再次上传)
+            </summary>
+        </member>
+        <member name="P:BFC.FRM.Global.Model.UploadFile.FileFullName">
+            <summary>
+            设置或获取文件名+路径
+            </summary>
+        </member>
+        <member name="P:BFC.FRM.Global.Model.UploadFile.Status">
+            <summary>
+            设置或获取文件可操作状态 TRUE表示文件可以保存 FALSE表示文件是删除状态
+            </summary>
+        </member>
+        <member name="T:BFC.FRM.Global.InfraSystemSettings">
+            <summary>
+            系统设置对象类。
+            </summary>
+        </member>
+        <member name="M:BFC.FRM.Global.InfraSystemSettings.#ctor">
+            <summary>
+            构造函数。
+            </summary>
+        </member>
+        <member name="P:BFC.FRM.Global.InfraSystemSettings.BLSystemInfoInstance">
+            <summary>
+            获取能够操作系统信息数据表的业务对象。
+            </summary>
+        </member>
+        <member name="M:BFC.FRM.Global.InfraSystemSettings.Refresh">
+            <summary>
+            刷新系统设置。
+            </summary>
+        </member>
+        <member name="T:BFC.FRM.Global.IBLSystemInfoExt">
+            <summary>
+            IBLSystemInfo 加强版，提供 Modal Class 的数据获取或存储。
+            </summary>
+        </member>
+        <member name="M:BFC.FRM.Global.IBLSystemInfoExt.GetSystemInfoList(System.Int32,System.String)">
+            <summary>
+            使用指定的区域语言获取 FRM_SYSTEMINFO 的两个值和名称的列表数据。
+            </summary>
+            <param name="sysID"></param>
+            <param name="cultureName">要获取名称列对应的区域语言，传递空则默认获取当前语言。</param>
+            <returns>如果没有数据则返回长度为 0 的 List 对象。 </returns>
+        </member>
+        <member name="M:BFC.FRM.Global.IBLSystemInfoExt.GetSystemInfoList(System.Int32,System.String,System.String)">
+            <summary>
+            使用指定的区域语言获取 FRM_SYSTEMINFO 的所有列的列表数据（名称列则只返回指定区域语言的列）。
+            </summary>
+            <param name="sysID"></param>
+            <param name="sysValue"></param>
+            <param name="cultureName">要获取名称列对应的区域语言，传递空则默认获取当前语言。</param>
+            <returns>如果没有数据则返回长度为 0 的 List 对象。 </returns>
+        </member>
+        <member name="M:BFC.FRM.Global.IBLSystemInfoExt.GetSystemInfoModel(System.Int32,System.Int32,System.String)">
+            <summary>
+            使用指定的区域语言获取 FRM_SYSTEMINFO 一行数据。
+            </summary>
+            <param name="sysID"></param>
+            <param name="sysSubID"></param>
+            <param name="cultureName">要获取名称列对应的区域语言，传递空则默认获取当前语言。</param>
+            <returns>如果没有数据则返回 null。 </returns>
+        </member>
+        <member name="M:BFC.FRM.Global.IBLSystemInfoExt.GetSystemInfoModel(System.Int32,System.String,System.String)">
+            <summary>
+            通过 SysID 和 SysValue 以及使用指定的区域语言获取 FRM_SYSTEMINFO 一行数据。
+            如果获取到多行数据则只返回第一行。
+            </summary>
+            <param name="sysID"></param>
+            <param name="sysValue"></param>
+            <param name="cultureName">要获取名称列对应的区域语言，传递空则默认获取当前语言。</param>
+            <returns>如果没有数据则返回 null。 </returns>
+        </member>
+        <member name="T:BFC.FRM.Model.Data.SystemInfoModel">
+            <summary>
+            作    用：系统信息表
+            作    者：LCM
+            编写日期：2012/08/28 10/34
+            </summary>
+        </member>
+        <member name="F:BFC.FRM.Model.Data.SystemInfoModel._isSYSIDSetValue">
+            <summary>
+            指示当前对象自创建以来，属性 SYSID 是否已经设置了值（含设置为 null）。
+            </summary>
+        </member>
+        <member name="P:BFC.FRM.Model.Data.SystemInfoModel.SYSID">
+            <summary>
+            系统编号
+            </summary>
+        </member>
+        <member name="F:BFC.FRM.Model.Data.SystemInfoModel._isSYSSUBIDSetValue">
+            <summary>
+            指示当前对象自创建以来，属性 SYSSUBID 是否已经设置了值（含设置为 null）。
+            </summary>
+        </member>
+        <member name="P:BFC.FRM.Model.Data.SystemInfoModel.SYSSUBID">
+            <summary>
+            系统子编号
+            </summary>
+        </member>
+        <member name="F:BFC.FRM.Model.Data.SystemInfoModel._isSYSVALUESetValue">
+            <summary>
+            指示当前对象自创建以来，属性 SYSVALUE 是否已经设置了值（含设置为 null）。
+            </summary>
+        </member>
+        <member name="P:BFC.FRM.Model.Data.SystemInfoModel.SYSVALUE">
+            <summary>
+            值
+            </summary>
+        </member>
+        <member name="F:BFC.FRM.Model.Data.SystemInfoModel._isSYSVALUE2SetValue">
+            <summary>
+            指示当前对象自创建以来，属性 SYSVALUE2 是否已经设置了值（含设置为 null）。
+            </summary>
+        </member>
+        <member name="P:BFC.FRM.Model.Data.SystemInfoModel.SYSVALUE2">
+            <summary>
+            值2
+            </summary>
+        </member>
+        <member name="F:BFC.FRM.Model.Data.SystemInfoModel._isNAMESetValue">
+            <summary>
+            指示当前对象自创建以来，属性 NAME_ZH_CN 是否已经设置了值（含设置为 null）。
+            </summary>
+        </member>
+        <member name="P:BFC.FRM.Model.Data.SystemInfoModel.NAME">
+            <summary>
+            名称
+            </summary>
+        </member>
+        <member name="F:BFC.FRM.Model.Data.SystemInfoModel._isSORTINDEXSetValue">
+            <summary>
+            指示当前对象自创建以来，属性 SORTINDEX 是否已经设置了值（含设置为 null）。
+            </summary>
+        </member>
+        <member name="P:BFC.FRM.Model.Data.SystemInfoModel.SORTINDEX">
+            <summary>
+            排序编号
+            </summary>
+        </member>
+        <member name="F:BFC.FRM.Model.Data.SystemInfoModel._isISFIXVALUESetValue">
+            <summary>
+            指示当前对象自创建以来，属性 ISFIXVALUE 是否已经设置了值（含设置为 null）。
+            </summary>
+        </member>
+        <member name="P:BFC.FRM.Model.Data.SystemInfoModel.ISFIXVALUE">
+            <summary>
+            是否固定值，不可修改
+            </summary>
+        </member>
+        <member name="F:BFC.FRM.Model.Data.SystemInfoModel._isDESCRIPTIONSetValue">
+            <summary>
+            指示当前对象自创建以来，属性 DESCRIPTION 是否已经设置了值（含设置为 null）。
+            </summary>
+        </member>
+        <member name="P:BFC.FRM.Model.Data.SystemInfoModel.DESCRIPTION">
+            <summary>
+            描述
+            </summary>
+        </member>
+        <member name="T:BFC.FRM.Model.Data.OnlineFunctionInfoTableRowChangeEventHandler">
+             <summary>
+             DataRow 对象变更时引发的事件。
+            </summary>
+             <param name="sender">引发事件的对象。</param>
+             <param name="e">包含有关事件处理数据的 System.EventArgs。</param>
+        </member>
+        <member name="P:BFC.FRM.Model.Data.OnlineFunctionInfoRow.SessionID">
+            <summary>会话ID</summary>
+        </member>
+        <member name="P:BFC.FRM.Model.Data.OnlineFunctionInfoRow.FunctionID">
+            <summary>功能ID</summary>
+        </member>
+        <member name="P:BFC.FRM.Model.Data.OnlineFunctionInfoRow.LastCallServer">
+            <summary>最后回调服务器</summary>
+        </member>
+        <member name="T:BFC.FRM.Model.Data.OnlineSessionInfoTableRowChangeEventHandler">
+             <summary>
+             DataRow 对象变更时引发的事件。
+            </summary>
+             <param name="sender">引发事件的对象。</param>
+             <param name="e">包含有关事件处理数据的 System.EventArgs。</param>
+        </member>
+        <member name="T:BFC.FRM.Model.Data.OnlineSessionInfoTable">
+            <summary>
+            作    用：在线会话信息
+            作    者：刘重明
+            编写日期：2009-05-05
+            </summary>
+        </member>
+        <member name="P:BFC.FRM.Model.Data.OnlineSessionInfoRow.SessionID">
+            <summary>会话编号</summary>
+        </member>
+        <member name="P:BFC.FRM.Model.Data.OnlineSessionInfoRow.StartTime">
+            <summary>会话开始时间</summary>
+        </member>
+        <member name="P:BFC.FRM.Model.Data.OnlineSessionInfoRow.LoginTime">
+            <summary>登录时间</summary>
+        </member>
+        <member name="P:BFC.FRM.Model.Data.OnlineSessionInfoRow.LoginUserID">
+            <summary>登录用户编号</summary>
+        </member>
+        <member name="P:BFC.FRM.Model.Data.OnlineSessionInfoRow.LastCallServer">
+            <summary>心跳包最后回调服务器时间</summary>
+        </member>
+        <member name="P:BFC.FRM.Model.Data.OnlineSessionInfoRow.LogoutTime">
+            <summary>注销时间</summary>
+        </member>
+        <member name="P:BFC.FRM.Model.Data.OnlineSessionInfoRow.ClientIP">
+            <summary>客户端IP</summary>
+        </member>
+        <member name="P:BFC.FRM.Model.Data.OnlineSessionInfoRow.ClientHost">
+            <summary>客户端机器名</summary>
+        </member>
+        <member name="P:BFC.FRM.Model.Data.OnlineSessionInfoRow.LoginUserName">
+            <summary>登录用户名称</summary>
+        </member>
+        <member name="P:BFC.FRM.Model.Data.OnlineSessionInfoRow.LastAccessTime">
+            <summary>用户最后访问服务器时间</summary>
+        </member>
+        <member name="P:BFC.FRM.Model.Data.OnlineSessionInfoRow.LastAccessFunction">
+            <summary>用户最后访问页面ID</summary>
+        </member>
+        <member name="P:BFC.FRM.Model.Data.OnlineSessionInfoRow.LastAccessFunctionTitle">
+            <summary>用户最后访问页面名称</summary>
+        </member>
+        <member name="P:BFC.FRM.Model.Data.OnlineSessionInfoRow.Message">
+            <summary>服务器向客户端发送的消息</summary>
+        </member>
+        <member name="T:BFC.FRM.Model.Data.ResourcesListTableRowChangeEventHandler">
+             <summary>
+             DataRow 对象变更时引发的事件。
+            </summary>
+             <param name="sender">引发事件的对象。</param>
+             <param name="e">包含有关事件处理数据的 System.EventArgs。</param>
+        </member>
+        <member name="T:BFC.FRM.Model.Data.ResourcesListTable">
+            <summary>
+            作    用：资源文件列表
+            作    者：刘重明
+            编写日期：2009-07-15
+            </summary>
+        </member>
+        <member name="P:BFC.FRM.Model.Data.ResourcesListRow.CultureName">
+            <summary></summary>
+        </member>
+        <member name="P:BFC.FRM.Model.Data.ResourcesListRow.LanguageName">
+            <summary></summary>
+        </member>
+        <member name="T:BFC.FRM.Model.Data.FunctionDefsDataTableRowChangeEventHandler">
+             <summary>
+             DataRow 对象变更时引发的事件。
+            </summary>
+             <param name="sender">引发事件的对象。</param>
+             <param name="e">包含有关事件处理数据的 System.EventArgs。</param>
+        </member>
+        <member name="T:BFC.FRM.Model.Data.FunctionDefsData">
+            <summary>
+            作    用：
+            作    者：000029
+            编写日期：2010-08-12
+            </summary>
+        </member>
+        <member name="P:BFC.FRM.Model.Data.FunctionDefsRow.FunctionID">
+            <summary></summary>
+        </member>
+        <member name="P:BFC.FRM.Model.Data.FunctionDefsRow.FunctionName">
+            <summary></summary>
+        </member>
+        <member name="P:BFC.FRM.Model.Data.FunctionDefsRow.Title">
+            <summary></summary>
+        </member>
+        <member name="P:BFC.FRM.Model.Data.FunctionDefsRow.Url">
+            <summary></summary>
+        </member>
+        <member name="P:BFC.FRM.Model.Data.FunctionDefsRow.IsAuthorized">
+            <summary></summary>
+        </member>
+        <member name="P:BFC.FRM.Model.Data.FunctionDefsRow.FilePath">
+            <summary></summary>
+        </member>
+        <member name="P:BFC.FRM.Model.Data.FunctionDefsRow.LevelIndex">
+            <summary></summary>
+        </member>
+        <member name="P:BFC.FRM.Model.Data.FunctionDefsRow.QueryString">
+            <summary></summary>
+        </member>
+        <member name="P:BFC.FRM.Model.Data.FunctionDefsRow.OtherInfo">
+            <summary></summary>
+        </member>
+        <member name="T:BFC.FRM.Model.Data.SystemInfoDataRowChangeEventHandler">
+             <summary>
+             DataRow 对象变更时引发的事件。
+            </summary>
+             <param name="sender">引发事件的对象。</param>
+             <param name="e">包含有关事件处理数据的 System.EventArgs。</param>
+        </member>
+        <member name="T:BFC.FRM.Model.Data.SystemInfoData">
+            <summary>
+            作    用：系统信息表
+            作    者：刘重明
+            编写日期：2009-07-30
+            </summary>
+        </member>
+        <member name="P:BFC.FRM.Model.Data.SystemInfoDataRow.SysID">
+            <summary>系统编号</summary>
+        </member>
+        <member name="P:BFC.FRM.Model.Data.SystemInfoDataRow.SysSubID">
+            <summary>系统子编号</summary>
+        </member>
+        <member name="P:BFC.FRM.Model.Data.SystemInfoDataRow.SysValue">
+            <summary>值</summary>
+        </member>
+        <member name="P:BFC.FRM.Model.Data.SystemInfoDataRow.SysValue2">
+            <summary>值2</summary>
+        </member>
+        <member name="P:BFC.FRM.Model.Data.SystemInfoDataRow.Name">
+            <summary>名称</summary>
+        </member>
+        <member name="P:BFC.FRM.Model.Data.SystemInfoDataRow.SortIndex">
+            <summary>排序编号</summary>
+        </member>
+        <member name="P:BFC.FRM.Model.Data.SystemInfoDataRow.IsFixValue">
+            <summary>是否固定值，不可修改</summary>
+        </member>
+        <member name="P:BFC.FRM.Model.Data.SystemInfoDataRow.Description">
+            <summary>描述</summary>
+        </member>
+        <member name="T:BFC.FRM.Model.InfraModelBase">
+            <summary>
+            Data model object base class.
+            </summary>
+        </member>
+        <member name="T:BFC.FRM.Model.InfraUpdatableModelBase">
+            <summary>
+            Updatable Data model object base class.
+            </summary>
+        </member>
+        <member name="T:BFC.FRM.Model.CultureInfo">
+            <summary>
+            提供系统区域化支持。
+            </summary>
+        </member>
+        <member name="P:BFC.FRM.Model.CultureInfo.NumberGroupSeparator">
+            <summary>
+            货币千位分隔符.
+            </summary>
+        </member>
+        <member name="P:BFC.FRM.Model.CultureInfo.DateSeparator">
+            <summary>
+            日期分隔符
+            </summary>
+        </member>
+        <member name="P:BFC.FRM.Model.CultureInfo.TimeSeparator">
+            <summary>
+            时间分隔符
+            </summary>
+        </member>
+        <member name="P:BFC.FRM.Model.CultureInfo.DateFormat">
+            <summary>
+            日期格式字符串。
+            </summary>
+        </member>
+        <member name="P:BFC.FRM.Model.CultureInfo.TimeFormat">
+            <summary>
+            时间格式字符串(不含秒)。
+            </summary>
+        </member>
+        <member name="P:BFC.FRM.Model.CultureInfo.TimeSecFormat">
+            <summary>
+            时间格式字符串(含秒)。
+            </summary>
+        </member>
+        <member name="P:BFC.FRM.Model.CultureInfo.DateTimeFormat">
+            <summary>
+            日期时间格式字符串(不含秒)。
+            </summary>
+        </member>
+        <member name="P:BFC.FRM.Model.CultureInfo.DateTimeSecFormat">
+            <summary>
+            日期时间格式字符串(含秒)。
+            </summary>
+        </member>
+        <member name="M:BFC.FRM.Model.CultureInfo.FormatDate(System.DateTime)">
+            <summary>
+            将 DateTime 对象格式化为日期格式。
+            </summary>
+            <param name="time"></param>
+            <returns></returns>
+        </member>
+        <member name="M:BFC.FRM.Model.CultureInfo.FormatTime(System.DateTime)">
+            <summary>
+            将 DateTime 对象格式化为不含秒的时间格式。
+            </summary>
+            <param name="time"></param>
+            <returns></returns>
+        </member>
+        <member name="M:BFC.FRM.Model.CultureInfo.FormatTimeSec(System.DateTime)">
+            <summary>
+            将 DateTime 对象格式化为含秒的时间格式
+            </summary>
+            <param name="time"></param>
+            <returns></returns>
+        </member>
+        <member name="M:BFC.FRM.Model.CultureInfo.FormatDateTime(System.DateTime)">
+            <summary>
+            将 DateTime 对象格式化为不含秒的日期时间格式。
+            </summary>
+            <param name="time"></param>
+            <returns></returns>
+        </member>
+        <member name="M:BFC.FRM.Model.CultureInfo.FormatDateTimeSec(System.DateTime)">
+            <summary>
+            将 DateTime 对象格式化为含秒的日期时间格式。
+            </summary>
+            <param name="time"></param>
+            <returns></returns>
+        </member>
+        <member name="M:BFC.FRM.Model.CultureInfo.FormatNumber(System.Decimal)">
+            <summary>
+            格式化数字。
+            </summary>
+            <param name="number"></param>
+            <returns></returns>
+        </member>
+        <member name="M:BFC.FRM.Model.CultureInfo.FormatNumber(System.Int32)">
+            <summary>
+            格式化数字。
+            </summary>
+            <param name="number"></param>
+            <returns></returns>
+        </member>
+        <member name="M:BFC.FRM.Model.CultureInfo.FormatNumber(System.Int64)">
+            <summary>
+            格式化数字。
+            </summary>
+            <param name="number"></param>
+            <returns></returns>
+        </member>
+        <member name="M:BFC.FRM.Model.CultureInfo.FormatCurrency(System.Decimal)">
+            <summary>
+            格式化货币。
+            </summary>
+            <param name="number"></param>
+            <returns></returns>
+        </member>
+        <member name="M:BFC.FRM.Model.CultureInfo.FormatCurrency(System.Int32)">
+            <summary>
+            格式化货币。
+            </summary>
+            <param name="number"></param>
+            <returns></returns>
+        </member>
+        <member name="M:BFC.FRM.Model.CultureInfo.FormatCurrency(System.Int64)">
+            <summary>
+            格式化货币。
+            </summary>
+            <param name="number"></param>
+            <returns></returns>
+        </member>
+        <member name="T:BFC.FRM.Model.InfraUserLoginInfo">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="F:BFC.FRM.Model.AuthorityVerifyResult.Success">
+            <summary>
+            检查成功。
+            </summary>
+        </member>
+        <member name="F:BFC.FRM.Model.AuthorityVerifyResult.Logout">
+            <summary>
+            用户未登录。
+            </summary>
+        </member>
+        <member name="F:BFC.FRM.Model.AuthorityVerifyResult.SubmitUserInvalid">
+            <summary>
+            自上次随页面发送到客户端的用户已经无效。
+            </summary>
+        </member>
+        <member name="F:BFC.FRM.Model.AuthorityVerifyResult.NotEnoughAuthority">
+            <summary>
+            当前登录用户不允许进入当前请求的用户，权限不足。
+            </summary>
+        </member>
+        <member name="T:BFC.FRM.Model.MailPopSetting">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="T:BFC.FRM.Model.MailSmtpSetting">
+            <summary>
+            SendEmailSetting 的摘要说明。
+            </summary>
+        </member>
+        <member name="T:BFC.FRM.Model.InfraThreadData">
+            <summary>
+            线程传递的数据。
+            </summary>
+        </member>
+        <member name="P:BFC.FRM.Model.InfraThreadData.LoginUser">
+            <summary>
+            当前登录系统的用户编号。
+            </summary>
+        </member>
+    </members>
+</doc>

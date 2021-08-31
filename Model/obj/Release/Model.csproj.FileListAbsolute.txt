@@ -1,0 +1,5 @@
+D:\Learn\miniUI.NET\UnitiTwo\Model\bin\Release\Model.dll
+D:\Learn\miniUI.NET\UnitiTwo\Model\bin\Release\Model.pdb
+D:\Learn\miniUI.NET\UnitiTwo\Model\obj\Release\Model.csprojResolveAssemblyReference.cache
+D:\Learn\miniUI.NET\UnitiTwo\Model\obj\Release\Model.dll
+D:\Learn\miniUI.NET\UnitiTwo\Model\obj\Release\Model.pdb

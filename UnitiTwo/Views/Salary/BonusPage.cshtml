@@ -1,0 +1,203 @@
+﻿@{
+    Layout = Layout = "~/Views/Shared/_Layout.cshtml"; ;
+}
+@*<div class="mini-splitter" vertical="true" style="width:100%;">*@
+    <fieldset style="width:98%;border:solid 1px #aaa;margin-top:1px;position:relative;" >
+        <legend>基本信息</legend>
+        <div id="editForm1" style="padding:2px;" >
+            <table style="width:100%;"align="center">
+                <tr>
+                    <td style="width:80px;">计划编号：</td>
+                    <td style="width:150px;"><input id="bph_plan_id" name="bph_plan_id" class="mini-textbox" value="@Model.bph_plan_id" /></td>
+                    <td style="width:80px;">计划公司：</td>
+                    <td style="width:150px;">
+                        <input id="bph_company_id" name="bph_company_id" class="mini-combobox" url="/Common/GetCompanys"
+                               textField="OrganizationName" valueField="OrganizationId" required="true" value="@Model.bph_company_id" />
+                    </td>
+                    <td style="width:80px;">发放月份：</td>
+                    <td style="width:150px;">
+                        <input id="bph_bonus_month" name="bph_bonus_month" class="mini-combobox" style="width:150px;" textField="sysvalue" valueField="sysvalue"
+                               url="/Common/GetMonths" value="@Model.bph_bonus_month" required="true" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>奖金类型：</td>
+                    <td>
+                        <input id="bph_bonus_type" name="bph_bonus_type" class="mini-combobox" url="/Common/GetSystemInfoList?sysid=3007"
+                               textField="description" valueField="sysvalue" required="true" value="@Model.bph_bonus_type" />
+                    </td>
+                    <td>项目编号：</td>
+                    <td>
+                        <input id="bph_bonus_from" name="bph_bonus_from" class="mini-textbox" value="@Model.bph_bonus_from" />
+                    </td>
+                    <td>计划状态：</td>
+                    <td>
+                        <input id="bph_status" name="bph_status" class="mini-hidden" value="@Model.bph_status" />
+                        <input id="bph_status_name" name="bph_status_name" class="mini-textbox" value="@Model.bph_status_name" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>备注：</td>
+                    <td colspan="3"><input style="width:300px;" id="bph_remarks" name="bph_remarks" class="mini-textbox" value="@Model.bph_remarks" /></td>
+
+                    <td colspan="2" align="right">
+                        <a id="btnSave" class="mini-button" onclick="save" style="width:60px;margin-right:20px;">保存</a>
+                        <a class="mini-button" onclick="onCancel" style="width:60px;">取消</a>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </fieldset>
+    <fieldset style="width:98%;height:400px;border:solid 1px #aaa;margin-top:1px;">
+        <legend>奖金明细</legend>
+        <table >
+            <tr>
+                <td style="width:380px;">
+                    <label>已选中员工</label>
+                    @*<div id="listbox1" class="mini-listbox" style="width:350px;height:300px;"
+                         showCheckBox="true" multiSelect="true"
+                         url="/Salary/GetBonusPlanDtl?planId=@Model.bph_plan_id&companyId=@Model.bph_company_id">
+                        <div property="columns">
+                            <div field="employee_Id" width="100px" headerAlign="center" allowSort="true" align="center">员工编号</div>
+                            <div field="employee_Name" width="120px" headerAlign="center" allowSort="true">员工姓名</div>
+                            <div field="bonus_amount" width="100px" headerAlign="center" allowSort="true" align="right" dataType="currency" currencyUnit="￥"> 实付薪资
+                                <input property="editor" class="mini-spinner" minValue="0.00" value="" style="width:100%;" />
+                            </div>
+                        </div>
+                    </div>*@
+                    <div id="datagrid1" class="mini-datagrid" style="width:380px;height:300px;"
+                         allowCellSelect="true" multiSelect="true" showFooter="false" showPager="false" allowCellEdit="true"  editNextOnEnterKey="true" editNextRowCell="true"
+                         url="/Salary/GetBonusPlanDtl?planId=@Model.bph_plan_id&companyId=@Model.bph_company_id">
+                        <div property="columns">
+                            <div type="checkcolumn"></div>
+                            <div field="employee_Id" width="90px" headerAlign="center" allowSort="true" align="center">员工编号</div>
+                            <div field="employee_Name" width="120px" headerAlign="center" allowSort="true">员工姓名</div>
+                            <div field="bonus_amount" width="100px" headerAlign="center" allowSort="true" align="right" dataType="currency" currencyUnit="￥">
+                                实付薪资
+                                <input property="editor" class="mini-spinner" minValue="0.00" maxValue="9999999.00" value="" style="width:100%;" />
+                            </div>
+                        </div>
+                    </div>
+                </td>
+                <td style="width:100px;text-align:center;">
+                    <label></label>
+                    <input type="button" value=">" onclick="add()" style="width:40px;" /><br />
+                    <input type="button" value=">>" onclick="addAll()" style="width:40px;" /><br />
+                    <input type="button" value="&lt;&lt;" onclick="removeAll()" style="width:40px;" /><br />
+                    <input type="button" value="&lt;" onclick="removes()" style="width:40px;" /><br />
+
+                </td>
+                <td >
+                    <label>未选中员工</label>
+                    <div id="listbox2" class="mini-listbox" style="width:250px;height:300px;"
+                         showCheckBox="true" multiSelect="true" url="/Salary/GetNoBonusEmp?planId=@Model.bph_plan_id&companyId=@Model.bph_company_id">
+                        <div property="columns">
+                            <div header="员工编号" width="100px" field="employee_Id"></div>
+                            <div header="员工姓名" width="100px" field="employee_Name"></div>
+                        </div>
+                    </div>
+                </td>
+                @*<td style="width:50px;text-align:center;vertical-align:bottom">
+                    <a class="mini-button" onclick="upItem()" style="width:55px;" >Up</a>
+                    <a class="mini-button" onclick="downItem()" style="width:55px;" >Down</a>
+
+                </td>*@
+            </tr>
+            @*<tr>
+                <td  colspan="4" align="center">
+                    <input type="button" value="Save" onclick="saveData()" style="width:55px;padding-right:0px;" />
+                </td>
+            </tr>*@
+        </table>
+        @*<div style="width:100px;" text-align="right"><input type="button" value="Save" onclick="saveData()" style="width:55px;padding-right:0px;" /></div>*@
+        
+    </fieldset>
+@*</div>*@
+
+<script>
+    mini.parse();
+    var form = new mini.Form("#editForm1");
+    var st = mini.get("bph_status");
+    if (st.value != "00" && st.value != "") {
+        form.setEnabled(false);
+        var btnSave = mini.get("btnSave");
+        btnSave.disable();
+    }
+    var grid = mini.get("datagrid1");
+    var listbox2 = mini.get("listbox2");
+   grid.load();
+    function add() {
+        var rows = grid.getSelecteds();
+        for (var i = 0; i < rows.length; i++) {
+            var row = rows[i];
+            var item = { employee_Id: row.employee_Id, employee_Name: row.employee_Name };
+            
+            listbox2.addItem(item);
+        }
+        grid.removeRows(rows,true);
+    }
+    function addAll() {
+        var rows = grid.getData();
+        for (var i = 0; i < rows.length; i++) {
+            var row = rows[i];
+            var item = { employee_Id: row.employee_Id, employee_Name: row.employee_Name };
+            listbox2.addItem(item);
+        }
+        grid.removeRows(rows, true);
+    }
+    function removes() {
+        var items = listbox2.getSelecteds();
+        listbox2.removeItems(items);
+        for (var i = 0; i < items.length; i++) {
+            var item = items[i];
+            var newRow = { employee_Id: item.employee_Id, employee_Name: item.employee_Name, bonus_amount: 0 };
+            grid.addRow(newRow, 0);
+        }
+    }
+    function removeAll() {
+        var items = listbox2.getData();
+        listbox2.removeItems(items);
+        for (var i = 0; i < items.length; i++) {
+            var item = items[i];
+            var newRow = { employee_Id: item.employee_Id, employee_Name: item.employee_Name, bonus_amount: 0 };
+            grid.addRow(newRow, 0);
+        }
+    }
+    function save() {
+        var form = new mini.Form("#editForm1");
+        form.validate();
+        if (form.isValid() == false) return;
+        var data = form.getData();//获取表单多个控件的数据
+        var data2 = grid.getData();
+        var json = mini.encode(data2);
+        $.ajax({
+            url: "/Salary/SaveBonusPlan",
+            type: "post",
+            data: { data: data, data2:json},
+            success: function (text) {
+                var result = mini.decode(text)
+                if (result.success) {
+                    mini.alert("保存成功");
+                    CloseWindow("提交成功");
+                } else {
+                    alert("Server Error\n\n" + result.message + "\n\n" + result.stackTrace);
+                }               
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                alert("HTTP Error\n\n" + jqXHR.responseText);
+            }
+        });
+    }
+    function onCancel() {
+        CloseWindow("cancel");
+    }
+    function CloseWindow(action) {
+        if (action == "close" && form.isChanged()) {
+            if (confirm("数据被修改了，是否先保存？")) {
+                return false;
+            }
+        }
+        if (window.CloseOwnerWindow) return window.CloseOwnerWindow(action);
+        else window.close();
+    }
+</script>

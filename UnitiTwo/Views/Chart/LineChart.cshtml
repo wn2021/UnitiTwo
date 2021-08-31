@@ -1,0 +1,74 @@
+﻿@{
+    ViewBag.Title = "NoticeView";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+选择报表：<input id="chartType" class="mini-combobox" style="width:150px;" textField="text" valueField="id"
+       url="@Url.Content("~/Content/data/chart.txt")" value="003" showNullItem="false" allowInput="false" onvaluechanged="onChartTypeChanged" />  
+<div id="win1" class="mini-window" title="ColumnChart" style="width:80%;height:500px;"
+     showToolbar="true" showFooter="true" showModal="false" allowResize="true" showCloseButton="false">
+    <div id="chartContainer" style="width:800px;height:450px;"></div>
+</div>
+
+@section scripts{
+<script src="https://cdn.bootcss.com/echarts/3.7.1/echarts.min.js"></script>
+<script type="text/javascript">
+
+    mini.parse();
+    var myChart = echarts.init(document.getElementById('chartContainer'));
+    var win = mini.get("win1");
+    var chartType = mini.get("chartType");
+    
+    function showChartWindow() {
+
+        var param = chartType.getValue();
+        $.ajax({
+            url: "/Chart/GetLineChart?param=" + param,
+            type: "post",
+            success: function (text) {
+                if (text.data) {
+                    myChart.clear();
+                    optionData = text.data;
+                    myChart.setOption({
+                        //color:['#FD2446','#248EFD','#C916F2','#6669B1'],
+                        title: optionData.title,
+                        legend: optionData.legend,
+                        tooltip: optionData.tooltip,                        
+                        toolbox: {
+                            show: true,
+                            feature: {
+                                saveAsImage: {
+                                    type: 'png',
+                                    show: true,
+                                    title: '保存为图片',
+                                },
+                                restore:{show:true}
+                            }
+                        },
+                        grid: {
+                            left: '3%',
+                            right: '4%',
+                            bottom: '3%',
+                            containLabel: true
+                        },
+                        xAxis: optionData.xAxis,
+                        yAxis: optionData.yAxis,
+                        series: optionData.series
+                    });
+                } else {
+                    mini.alert("图表获取失败！");
+                    win.hidden();
+                }
+
+            },
+            error: function () {
+            }
+        });       
+        win.show();
+    }
+    showChartWindow();
+    //报表类型改变
+    function onChartTypeChanged(e) {
+        showChartWindow();
+    }
+</script>
+    }

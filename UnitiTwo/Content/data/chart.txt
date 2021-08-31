@@ -1,0 +1,7 @@
+﻿[
+    { "id": "001", "text": "LineChart", continent: "折线图" },
+    { "id": "002", "text": "BarChart", continent: "条形图" },
+    { "id": "003", "text": "ColumnChart", continent: "柱形图" },
+    { "id": "004", "text": "PieChart", continent: "饼图" },
+    { "id": "005", "text": "RadarChart", continent: "雷达图" }
+]

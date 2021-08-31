@@ -1,0 +1,259 @@
+﻿@{
+    Layout = Layout = "~/Views/Shared/_Layout.cshtml"; ;
+}
+<fieldset style="width:80%;border:solid 1px #aaa;position:relative;">
+    <legend>部门信息</legend>
+    <div style="width:100%;">
+        <div class="mini-toolbar" style="border-bottom:0;padding:0px;">
+            <table style="width:100%;">
+                <tr>
+                    <td style="width:100%;">
+                        <a class="mini-button" iconCls="icon-add" onclick="add()">添加</a>
+                        <a class="mini-button" iconCls="icon-add" onclick="edit()">编辑</a>
+                        <a class="mini-button" iconCls="icon-remove" onclick="remove()">注销</a>
+                    </td>
+                    <td style="white-space:nowrap;">
+                        所属公司：<input id="companyId" class="mini-combobox" style="width:150px;" textField="OrganizationName" valueField="OrganizationId" emptyText="请选择..."
+                                    url="/Common/GetCompanys" value="0001" showNullItem="true" nullItemText="请选择..." />
+                        <span class="separator"></span>
+                        部门状态：<input id="deptstatus" class="mini-combobox" style="width:150px;" textField="description" valueField="sysvalue" emptyText="请选择..."
+                                    url="/Common/GetSystemInfoList?sysid=1002" value="" showNullItem="true" nullItemText="请选择..." />
+                        <span class="separator"></span>
+                        部门名称：<input id="departmentName" name="departmentName" class="mini-textbox" emptyText="请输入名称" style="width:150px;" />
+                        <a class="mini-button" onclick="search()">查询</a>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+    <div id="dept_grid" class="mini-datagrid" style="width:100%;height:280px;" allowResize="true"
+         url="/Company/DepartmentList" idField="ud_id" multiSelect="false" onselectionchanged="onSelectionChanged" 
+        selectOnLoad="true">
+        <div property="columns">
+            <div type="checkcolumn"></div>
+            <div field="ud_name" width="100" headerAlign="center" allowSort="true">部门名称</div>
+            <div field="ud_company_id" width="0" headerAlign="center" allowSort="true" class="mini-hidden"></div>
+            <div field="ud_company_name" width="100" headerAlign="center" allowSort="true">所属公司</div>
+            <div field="ud_status_name" width="60" headerAlign="center" allowSort="true">状态</div>
+            <div field="ud_create_time" width="120" headerAlign="center" allowSort="true" dateFormat="yyyy-MM-dd  HH:mm:ss">创建时间</div>
+            <div field="ud_create_user" width="80" headerAlign="center" allowSort="true">创建者</div>
+            <div field="ud_update_time" width="120" headerAlign="center" allowSort="true" dateFormat="yyyy-MM-dd  HH:mm:ss">更新时间</div>
+            <div field="ud_update_user" width="80" headerAlign="center" allowSort="true">更新者</div>
+        </div>
+    </div>
+    </fieldset>
+<br />
+@*<fieldset style="width:90%;border:solid 1px #aaa;position:relative;">
+    <legend>职位级别信息</legend>*@
+    <div style="width:90%;">
+        <div class="mini-toolbar" style="border-bottom:0;padding:0px;">
+            <table style="width:100%;">
+                <tr>
+                    <td >
+                        <a class="mini-button" iconCls="icon-add" onclick="add_level()">添加</a>
+                        <a class="mini-button" iconCls="icon-add" onclick="edit_level()">编辑</a>
+                        <a class="mini-button" iconCls="icon-remove" onclick="remove_level()">删除</a>
+                    </td>                  
+                </tr>
+            </table>
+        </div>
+    </div>
+    <div id="level_grid" class="mini-datagrid" style="width:90%;height:250px;" idField="upl_id"
+         url="/Company/LevelList" multiSelect="true">
+        <div property="columns">
+            <div type="checkcolumn"></div>
+            <div field="upl_name" width="100" headerAlign="center" allowSort="true">职级名称</div>
+            <div field="upl_company_name" width="100" allowSort="true" headerAlign="center">所属公司</div>
+            <div field="upl_department_name" width="100" headerAlign="center" allowSort="true">所属部门</div>
+            <div field="upl_status_name" width="60" allowSort="true" >状态</div>
+            <div field="upl_create_time" width="150" headerAlign="center" allowSort="true" dateFormat="yyyy-MM-dd  HH:mm:ss">创建时间</div>
+            <div field="upl_create_user" width="80" headerAlign="center" allowSort="true">创建者</div>
+            <div field="upl_update_time" width="150" headerAlign="center" allowSort="true" dateFormat="yyyy-MM-dd  HH:mm:ss">更新时间</div>
+            <div field="upl_update_user" width="80" headerAlign="center" allowSort="true">更新者</div>
+        </div>
+    </div>
+@*</fieldset>*@
+    <script>
+
+        mini.parse();
+        var grid = mini.get("dept_grid");
+        var level_grid = mini.get("level_grid");
+        var companyId = mini.get("companyId");
+        grid.load();
+        function search() {
+
+            var companyId = mini.get("companyId").value;
+            var deptstatus = mini.get("deptstatus").value;
+            var departmentName = mini.get("departmentName").value;
+            var companySearch = { companyId: companyId, deptstatus: deptstatus, departmentName: departmentName };
+            grid.load(companySearch);
+        }
+        $("#key").bind("keydown", function (e) {
+            if (e.keyCode == 13) {
+                search();
+            }
+        });
+        function onSelectionChanged(e) {
+
+            var grid = e.sender;
+            var record = grid.getSelected();
+            if (record) {
+                level_grid.load({ departmentId: record.ud_id, companyId: record.ud_company_id });
+            }
+        }
+        //删除
+        function remove() {
+            var rows = grid.getSelecteds();
+            if (rows.length > 0) {
+                if (confirm("确定删除选中记录？")) {                    
+                    grid.loading("操作中，请稍后......");
+                    $.ajax({
+                        url: "/Company/DepartDel?companyId=" + companyId.value + "&depId=" + rows[0].ud_id,
+                        type: "post",
+                        success: function (text) {
+                            if (text.return) {
+                                if (text.return > 0) {
+                                    alert("删除成功。");
+                                }
+                            } else {
+                                alert(text.toString());
+                            }
+                            grid.reload();
+                        },
+                        error: function () {
+                        }
+                    });
+                }
+            } else {
+                alert("请选中至少一条记录");
+            }
+        }
+        //修改
+        function edit() {
+            var row = grid.getSelected();
+            if (row) {
+                mini.open({
+                    targetWindow: window,
+
+                    url: "/Company/DepartEdit?companyId=" + companyId.value + "&depId=" + row.ud_id + "&actionType='Edit'",
+                    title: "编辑部门", width: 400, height: 200,
+                    onload: function () {
+                        var iframe = this.getIFrameEl();
+                        var data = { action: "edit" };
+
+                        iframe.contentWindow.OpenContext = { parent: window, popwin: this };
+
+                    },
+                    ondestroy: function (action) {
+                        loading();
+                        grid.reload();
+                    }
+                });
+            }
+        }
+
+        //新建
+        function add() {
+            mini.open({
+                targetWindow: window,
+
+                url: "/Company/DepartEdit?companyId=" + companyId.value + "&actionType=New",
+                title: "添加部门", width: 400, height: 200,
+                onload: function () {
+                    var iframe = this.getIFrameEl();
+                    loading();
+                    iframe.contentWindow.OpenContext = { parent: window, popwin: this };
+                },
+                ondestroy: function (action) {
+
+                    grid.reload();
+                }
+            });
+        }
+
+        //新建
+        function add_level() {
+            var row = grid.getSelected();
+            mini.open({
+                targetWindow: window,
+
+                url: "/Company/PositionLevelEdit?companyId=" + row.ud_company_id + "&departmentId=" + row.ud_id,
+                title: "添加职级", width: 400, height: 300,
+                onload: function () {
+                    var iframe = this.getIFrameEl();
+                    loading();
+                    iframe.contentWindow.OpenContext = { parent: window, popwin: this };
+                },
+                ondestroy: function (action) {
+
+                    grid.reload();
+                }
+            });
+        }
+        //修改
+        function edit_level() {
+            var row = grid.getSelected();           
+            var row2 = level_grid.getSelected();            
+            if (row2) {
+                mini.open({
+                    targetWindow: window,
+                    url: "/Company/PositionLevelEdit?companyId=" + row.ud_company_id + "&departmentId=" + row.ud_id + "&levelId=" + row2.upl_id,
+                    title: "编辑职级", width: 400, height: 300,
+                    onload: function () {
+                        var iframe = this.getIFrameEl();
+                        var data = { action: "edit" };
+
+                        iframe.contentWindow.OpenContext = { parent: window, popwin: this };
+
+                    },
+                    ondestroy: function (action) {
+                        loading();
+                        grid.reload();
+                    }
+                });
+            } else {
+                mini.alert("请选中一条记录");
+            }
+        }
+        //删除
+        function remove_level() {
+            var row = grid.getSelected();
+            var row2 = level_grid.getSelected();
+            if (row2) {
+                mini.confirm("确定删除选中记录？", "确认删除", function (action) {
+                    if (action == "ok") {
+                        grid.loading("操作中，请稍后......");
+                        $.ajax({
+                            url: "/Company/PositionLevelDel?companyId=" + companyId.value + "&depId=" + row.ud_id + "&levelId=" + row2.upl_id,
+                            type: "post",
+                            success: function (text) {
+                                if (text.return) {
+                                    if (text.return > 0) {
+                                        alert("删除成功。");
+                                    }
+                                } else {
+                                    alert(text.toString());
+                                }
+                                grid.reload();
+                            },
+                            error: function () {
+                            }
+                        });
+                    }
+                });
+            } else {
+                mini.alert("请选中至少一条记录");
+            }
+        }
+        function loading() {
+            mini.mask({
+                el: document.body,
+                cls: 'mini-mask-loading',
+                html: '加载中...'
+            });
+            setTimeout(function () {
+                mini.unmask(document.body);
+            }, 1000);
+        }
+    </script>
